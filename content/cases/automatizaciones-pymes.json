@@ -1,0 +1,32 @@
+{
+  "slug": "automatizaciones-pymes",
+  "featured": 2,
+  "category": "automatizacion",
+  "stack": [
+    "n8n",
+    "Telegram Bot API",
+    "Google Sheets",
+    "Google Service Account",
+    "Docker"
+  ],
+  "period": "2026-08 → presente",
+  "status": "prototipo",
+  "links": {},
+  "updated": "2026-10-01",
+  "text": {
+    "es": {
+      "title": "Plantillas n8n para negocios locales de cita",
+      "summary": "Librería de plantillas n8n diseñadas para configurarse rápido por negocio. La primera, Anti-No-Show, manda recordatorios y deja confirmar o cancelar con un toque. El prototipo en Telegram ya corre en vivo; el siguiente paso es portarlo a WhatsApp.",
+      "problem": "Los negocios de cita en Puerto Rico (barberías, salones, estética, tatuajes) no pueden pagar un desarrollo a medida. Mi idea inicial fue un bot de WhatsApp para capturar pedidos y citas, pero al validarla con dos negocios reales descubrí que ese no era su dolor: capturar mensajes les ahorraba minutos. Lo que sí les cuesta dinero es el no-show, el cliente que no llega y deja el espacio vacío.",
+      "solution": "Cambié el enfoque: en vez de una solución a medida, una librería de plantillas n8n que se construye una vez y está diseñada para configurarse en menos de una hora por cliente (objetivo aún sin medir; todavía no he incorporado ningún cliente), pensada para venderse como suscripción mensual.\n\nLa primera plantilla, el Paquete Anti-No-Show, envía un recordatorio dos días antes de la cita con botones para confirmar o cancelar. Al tocar un botón se actualiza la hoja de citas, se edita el mensaje y, si el cliente cancela, se avisa al dueño. Incluye comandos de servicios y horarios, archivado automático del historial y un flujo de errores que avisa al dueño del negocio si algo falla.\n\nAdemás diseñé una herramienta privada para administrar las suscripciones: recordatorio de pago, desactivación automática de los workflows de un cliente si no paga y reactivación con un comando. Documenté también dos propuestas: el depósito de reserva por ATH Móvil y un bot de pedidos por WhatsApp.",
+      "outcome": "Es un prototipo por iniciativa propia, probado con ejecuciones reales (incluyendo fallos provocados a propósito para comprobar las alertas). Hoy corren 5 workflows en mi propia instancia de n8n, con guías de configuración para clientes nuevos.\n\nTodavía no hay clientes de pago ni métricas de uso. Lo pendiente es portar la lógica a WhatsApp, montar infraestructura dedicada y construir el depósito y la lista de espera. También armé, como proyecto aparte, un sistema de evaluación digital para un concurso juvenil con Google Forms, Sheets y Apps Script."
+    },
+    "en": {
+      "title": "n8n templates for local appointment businesses",
+      "summary": "A library of n8n templates designed to be quick to set up for each new business. The first, Anti-No-Show, sends reminders and lets customers confirm or cancel with one tap. The Telegram prototype runs live; porting it to WhatsApp is next.",
+      "problem": "Appointment-based businesses in Puerto Rico (barbershops, salons, beauty, tattoo studios) can't afford custom software. My first idea was a WhatsApp bot to capture orders and bookings, but when I tested it with two real businesses I learned it wasn't their pain: taking messages saved them a few minutes. What actually costs them money is the no-show, the customer who doesn't turn up and leaves an empty slot.",
+      "solution": "I changed direction: instead of custom builds, a library of n8n templates built once and designed to be set up in under an hour per client (a target, not yet measured; I have not onboarded a client yet), meant to be sold as a monthly subscription.\n\nThe first template, the Anti-No-Show Package, sends a reminder two days before the appointment with confirm and cancel buttons. A tap updates the booking sheet, edits the message, and notifies the owner if the customer cancels. It also has service-list and opening-hours commands, automatic history archiving, and an error workflow that alerts the business owner when something fails.\n\nI also built a private tool to manage subscriptions: payment reminders, automatic deactivation of a client's workflows if they don't pay, and one-command reactivation. Two further proposals are documented: a booking deposit via ATH Movil, and a WhatsApp ordering bot.",
+      "outcome": "This is a self-initiated prototype, tested with real executions, including deliberately triggered failures to confirm the alerts fire. Five workflows currently run on my own n8n instance, with setup guides for onboarding a new client.\n\nThere are no paying customers or usage metrics yet. Still to do: port the logic to WhatsApp, set up dedicated hosting, and build the deposit and waitlist features. Separately, I also built a digital judging system for a youth contest using Google Forms, Sheets and Apps Script."
+    }
+  }
+}

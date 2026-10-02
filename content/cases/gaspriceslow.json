@@ -1,0 +1,40 @@
+{
+  "slug": "gaspriceslow",
+  "featured": 2,
+  "category": "producto",
+  "stack": [
+    "TypeScript",
+    "React",
+    "Vite",
+    "Tailwind CSS",
+    "Leaflet",
+    "Fastify",
+    "Prisma",
+    "Zod",
+    "PostgreSQL",
+    "PostGIS",
+    "Docker",
+    "pnpm workspaces",
+    "i18next"
+  ],
+  "period": "2026-06 → presente",
+  "status": "prototipo",
+  "links": {},
+  "updated": "2026-10-01",
+  "text": {
+    "es": {
+      "title": "GasPricesLow: comparador de gasolina en Puerto Rico",
+      "summary": "Prototipo de producto propio: encuentra la gasolinera más barata cerca de ti en Puerto Rico. Mapa, ranking por precio y distancia, panel para dueños de gasolineras y panel de administración, en un monorepo TypeScript. Modelo de negocio planeado: suscripción para dueños.",
+      "problem": "En Puerto Rico los precios de la gasolina cambian de una estación a otra, pero no existe un lugar único y confiable para compararlos. El dato oficial del Departamento de Asuntos del Consumidor se publica en Excel y PDF, poco útil desde un teléfono, y las gasolineras no tienen un canal directo para anunciar precios competitivos a quien está por comprar.",
+      "solution": "Diseñé el producto de punta a punta: primero una especificación completa (producto, diseño, datos, ranking, facturación, privacidad) y luego un esqueleto funcional en un monorepo pnpm con TypeScript.\n\n- **Consumidores:** geolocalización con consentimiento, tarjeta con la estación más barata, lista rankeada por precio, distancia y frescura del dato, filtros por tipo de combustible, litro/galón y español/inglés, y mapa con pines por precio.\n- **Dueños de gasolineras:** panel para ver sus estaciones (asignadas por el administrador) y actualizar precios, con una advertencia si el precio se aleja de lo esperado según datos mayoristas (por ahora, datos de muestra).\n- **Administración:** cola de verificación de estaciones pendientes (aprobar o rechazar) y tablas de estaciones y dueños.\n- **Confianza como regla de producto:** cada precio muestra su fuente y su antigüedad, y la colocación patrocinada va siempre etiquetada y nunca ocupa el primer lugar.\n- **Técnica:** API Fastify con Prisma sobre PostgreSQL/PostGIS, React con Vite y Tailwind, y un paquete compartido con la lógica de ranking.",
+      "outcome": "Es un prototipo: el esqueleto completo corre en local con datos de muestra, con las tres superficies (consumidor, dueño y administración) y una especificación de producto detallada. Todavía no está desplegado ni tiene usuarios.\n\nPendiente: facturación con Stripe para el modelo de suscripción de dueños, ingesta de los datos oficiales de precios (la advertencia usa hoy datos de muestra), datos reales de estaciones y apps móviles."
+    },
+    "en": {
+      "title": "GasPricesLow: gas price comparison for Puerto Rico",
+      "summary": "A product prototype I designed and built: find the cheapest gas station near you in Puerto Rico. Map, ranking by price and distance, a dashboard for station owners and an admin panel, in a TypeScript monorepo. Planned revenue model: owner subscriptions.",
+      "problem": "Gas prices in Puerto Rico vary from station to station, yet there is no single trustworthy place to compare them. The official data from the consumer affairs department is published as Excel and PDF files, which are hard to use on a phone, and station owners have no direct channel to advertise competitive prices to drivers who are about to buy.",
+      "solution": "I designed the product end to end: first a full specification (product, design, data, ranking, billing, privacy), then a working skeleton in a TypeScript pnpm monorepo.\n\n- **Consumers:** location-aware search with consent, a hero card for the cheapest station, a list ranked by price, distance and data freshness, fuel-grade, liter/gallon and Spanish/English toggles, and a map with price pins.\n- **Station owners:** a dashboard to manage the stations assigned to them and update prices, with a warning when a price falls outside what wholesale data suggests (sample data for now).\n- **Admin:** a verification queue for pending stations (approve or reject) and station and owner tables.\n- **Trust as a product rule:** every price shows its source and age, and sponsored placement is always labeled and never takes the top spot.\n- **Under the hood:** a Fastify API with Prisma on PostgreSQL/PostGIS, React with Vite and Tailwind, and a shared package holding the ranking logic.",
+      "outcome": "This is a prototype: the full skeleton runs locally on sample data, with all three surfaces (consumer, owner and admin) and a detailed product spec. It is not deployed yet and has no users.\n\nStill to do: Stripe billing for the owner subscription model, ingestion of the official price data (the warning runs on sample data today), real station data and mobile apps."
+    }
+  }
+}

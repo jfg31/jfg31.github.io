@@ -1,0 +1,36 @@
+{
+  "slug": "desarrollo-con-agentes-ia",
+  "featured": 2,
+  "category": "herramientas-ia",
+  "stack": [
+    "Claude Code",
+    "Obsidian",
+    "Node.js",
+    "Canvas 2D",
+    "n8n",
+    "Ollama",
+    "Whisper",
+    "PowerShell",
+    "Git"
+  ],
+  "period": "2026-06 → presente",
+  "status": "activo",
+  "links": {},
+  "updated": "2026-10-01",
+  "text": {
+    "es": {
+      "title": "Flujo de desarrollo con agentes IA",
+      "summary": "Sistema personal de desarrollo con IA: un segundo cerebro como contexto para agentes, un agente cuidador de tareas pendientes que diseñé, un visualizador de grafo, diagramas interactivos y un digest diario con LLM local.",
+      "problem": "Los asistentes de IA empiezan cada sesión sin memoria, las tareas pequeñas esperan a que yo esté frente a la máquina y trabajar con varios proyectos a la vez vuelve frágil el historial. Además, algunos proyectos manejan datos sensibles que no deben salir a la nube.",
+      "solution": "Armé un sistema de piezas pequeñas que se apoyan entre sí:\n- **Segundo cerebro en Obsidian** (estructura PARA, 20+ proyectos documentados) con una sección escrita específicamente para agentes: reglas, stack y qué leer antes de tocar código.\n- **Convenciones de workspace:** un repo por proyecto, documentación estándar que el agente lee antes y actualiza después, y un hook que hace commit y push al final de cada turno.\n- **Bob, un agente cuidador (diseñado y definido por mí; aún sin corridas reales):** su flujo está pensado para procesar el TODO de un proyecto de forma autónoma, marcar lo bloqueado sin detenerse y dejar un log y commits para revisar. No puede tocar nada fuera del proyecto asignado ni reescribir historial.\n- **cerebro-visual:** una app web propia, sin dependencias, que dibuja el vault como un grafo en Canvas 2D con física propia, más vistas de proyectos, cronología y pendientes.\n- **Diagramas técnicos interactivos** generados con un skill de terceros, con un flujo de verificación en navegador real.\n- **Digest diario de noticias:** un workflow de n8n con un agente de lenguaje local (Ollama, tool-calling) que arma un newsletter y lo envía por email y Telegram.\n- **Política \"local AI first\":** datos sensibles con modelos locales; la nube solo para proyectos personales y prototipos. También uso dictado por voz local con Whisper (herramienta de terceros).",
+      "outcome": "El sistema está en uso activo desde mediados de 2026. Los agentes arrancan con contexto real, en los proyectos con el hook activo cada turno de trabajo deja un commit al que puedo volver, y el digest de noticias corre a diario. cerebro-visual suma unas 860 líneas propias y cuatro vistas, sin dependencias.\n\nBob ya está definido como agente global y su bitácora viene incluida en cada proyecto nuevo. Las herramientas base (Claude Code, Obsidian, Archify, Whisper) son de terceros; el diseño del sistema, los agentes, las convenciones y la app son mi trabajo."
+    },
+    "en": {
+      "title": "AI-assisted development workflow",
+      "summary": "A personal AI development system: a second brain as shared context for agents, a caretaker agent for pending tasks that I designed, a graph visualizer, interactive diagrams, and a daily news digest powered by a local LLM.",
+      "problem": "AI assistants start every session with no memory, small tasks sit waiting until I'm at the keyboard, and juggling many projects makes history fragile. On top of that, some projects involve sensitive data that must not be sent to the cloud.",
+      "solution": "I built a system of small pieces that reinforce each other:\n- **A second brain in Obsidian** (PARA structure, 20+ documented projects) with a section written specifically for agents: rules, default stack, and what to read before touching code.\n- **Workspace conventions:** one repo per project, standard docs the agent reads first and updates afterwards, and a hook that commits and pushes at the end of every turn.\n- **Bob, a caretaker agent (designed and defined by me; no real runs yet):** its workflow is built to work through a project's TODO autonomously, flag blocked items without stopping, and leave a log and commits to review. It cannot touch anything outside its assigned project or rewrite history.\n- **cerebro-visual:** a dependency-free web app I wrote that renders the vault as a Canvas 2D graph with a custom physics engine, plus project, timeline and to-do views.\n- **Interactive technical diagrams** generated with a third-party skill, backed by a real-browser verification routine.\n- **A daily news digest:** an n8n workflow with a local language-model agent (Ollama, tool-calling) that builds a newsletter and sends it by email and Telegram.\n- **A \"local AI first\" policy:** sensitive data stays on local models; the cloud is only for personal projects and prototypes. I also use local voice dictation with Whisper (a third-party tool).",
+      "outcome": "The system has been in active use since mid-2026. Agents start with real context, in projects with the hook enabled every turn of work leaves a commit I can roll back to, and the news digest runs daily. cerebro-visual is about 860 lines of my own code with four views and no dependencies.\n\nBob is defined as a global agent and its log template ships with every new project. The base tools (Claude Code, Obsidian, Archify, Whisper) are third-party; the system design, agents, conventions and the app are my work."
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "slug": "prototipos-negocios-locales",
+  "featured": 1,
+  "category": "clientes",
+  "stack": [
+    "PHP",
+    "SQLite",
+    "MySQL",
+    "JavaScript",
+    "HTML/CSS",
+    "Node.js",
+    "Express",
+    "PostgreSQL"
+  ],
+  "period": "2026-06 → 2026-08",
+  "status": "prototipo",
+  "links": {},
+  "updated": "2026-10-01",
+  "text": {
+    "es": {
+      "title": "Prototipos para negocios locales de Puerto Rico",
+      "summary": "Tres prototipos y propuestas por iniciativa propia para negocios reales de Puerto Rico (reservas, sitio web, fila con aviso por SMS), de la necesidad detectada a la presentación, más Turnos, el producto genérico que salió de ellos.",
+      "problem": "Varios negocios locales de Puerto Rico tenían necesidades claras sin solución digital: una barbería sin reservas en línea, un crew de carros sin sitio para mostrar su trabajo y un negocio de belleza que manejaba su fila de espera en papel, con clientas que se alejaban y no estaban cuando les tocaba.\n\nNadie me lo pidió. Con los tres negocios reales me acerqué por iniciativa propia: detecté la necesidad, construí un prototipo funcional o una propuesta y se lo presenté.",
+      "solution": "Tres prototipos o propuestas para negocios reales, de la necesidad a la presentación, más un producto genérico derivado:\n\n- **ChinoBarber (barbería):** sitio con galería y sistema de reservas en línea, horarios disponibles en tiempo real, emails de confirmación y panel de administración. Lo reconstruí en PHP puro con SQLite/MySQL para que corra en un hosting compartido básico.\n- **OnlyNoise (crew de carros):** sitio con slideshows animados al hacer scroll (sin librerías), eventos y galería de álbumes, más un panel admin con roles y backend en Node.js, Express y PostgreSQL.\n- **The Brow Bar, turnos (negocio de belleza):** diseño de un sistema de fila FIFO con aviso por SMS para que la clienta no tenga que esperar de pie. Preparé la arquitectura y una propuesta comercial con diagramas y wireframes, que envié al negocio.\n- **Turnos, landing (producto genérico, construido después):** generalicé la idea de la fila para cualquier negocio con espera y construí su landing tras explorar tres direcciones de diseño. No está asociado a ningún negocio concreto.",
+      "outcome": "Ninguno se ha concretado todavía como proyecto en producción; me dejaron práctica real en levantar necesidades, construir rápido y presentar. Quedaron en etapa de prototipo y no son contratos pagados. Turnos es un producto propio, sin negocio asociado.\n\nLo que demuestran: detectar necesidades reales, construir de punta a punta (diseño, backend, seguridad, pruebas, guías de despliegue) y presentar la solución, incluida una propuesta comercial formal, a dueños de negocio no técnicos."
+    },
+    "en": {
+      "title": "Prototypes for Local Puerto Rico Businesses",
+      "summary": "Three self-initiated prototypes and proposals for real Puerto Rico businesses (booking, a showcase site, an SMS-alert queue), taken from spotted need to pitch, plus Turnos, the generic product that came out of them.",
+      "problem": "Several local businesses in Puerto Rico had clear needs and no digital solution: a barbershop without online booking, a car crew with no site to show its work, and a beauty business running its waiting line on paper, with customers wandering off and missing their turn.\n\nNobody asked me to. With the three real businesses I approached them on my own initiative: I spotted the need, built a working prototype or a proposal and presented it.",
+      "solution": "Three prototypes or proposals for real businesses, from need to pitch, plus a derived generic product:\n\n- **ChinoBarber (barbershop):** a site with a gallery and online booking, live availability of time slots, confirmation emails and an admin panel. I rebuilt it in plain PHP with SQLite/MySQL so it runs on basic shared hosting.\n- **OnlyNoise (car crew):** a site with scroll-driven slideshows (no libraries), events and an album gallery, plus a role-based admin panel and a Node.js, Express and PostgreSQL backend.\n- **The Brow Bar, queue system (beauty business):** a FIFO queue with SMS alerts so customers don't have to wait standing in line. I designed the architecture and wrote a commercial proposal with flow diagrams and wireframes, which I sent to the business.\n- **Turnos, landing page (generic product, built afterwards):** I generalized the queue idea for any business with a waiting line and built its landing page after exploring three design directions. It isn't tied to any specific business.",
+      "outcome": "None has gone to production yet; they gave me real practice in discovering needs, building fast and pitching. They stopped at prototype stage and were not paid contracts. Turnos is a product of my own, with no business attached.\n\nWhat they show: spotting real needs, building end to end (design, backend, security, testing, deployment guides) and pitching the solution, including a formal commercial proposal, to non-technical business owners."
+    }
+  }
+}

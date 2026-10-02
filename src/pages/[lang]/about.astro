@@ -1,0 +1,13 @@
+---
+import { AboutPage } from '@theme';
+import { LOCALES, type Locale } from '../../themes/contract';
+import { ui } from '../../i18n/ui';
+import { getCases, getProfile } from '../../lib/content';
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const locale = Astro.params.lang as Locale;
+---
+<AboutPage locale={locale} ui={ui[locale]} profile={getProfile()} cases={getCases()} />

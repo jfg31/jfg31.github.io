@@ -1,0 +1,14 @@
+---
+import { CasePage } from '@theme';
+import { LOCALES, type Case, type Locale } from '../../../themes/contract';
+import { ui } from '../../../i18n/ui';
+import { getCases, getProfile } from '../../../lib/content';
+
+export function getStaticPaths() {
+  return LOCALES.flatMap((lang) => getCases().map((item) => ({ params: { lang, slug: item.slug }, props: { item } })));
+}
+
+const locale = Astro.params.lang as Locale;
+const { item } = Astro.props as { item: Case };
+---
+<CasePage locale={locale} ui={ui[locale]} profile={getProfile()} cases={getCases()} item={item} />

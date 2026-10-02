@@ -1,0 +1,37 @@
+{
+  "slug": "herramientas-personales",
+  "featured": 3,
+  "category": "producto",
+  "stack": [
+    "React",
+    "TypeScript",
+    "Vite",
+    "Fastify",
+    "FastAPI",
+    "Python",
+    "Docker Compose",
+    "Vitest",
+    "IndexedDB",
+    "Ollama"
+  ],
+  "period": "2026-06 → presente",
+  "status": "activo",
+  "links": {},
+  "updated": "2026-10-01",
+  "text": {
+    "es": {
+      "title": "Herramientas personales: finanzas y diario a medida",
+      "summary": "Tres herramientas que construí para uso propio, con la privacidad como requisito: una plataforma financiera con microservicios y Docker Compose, un analizador de estados de cuenta en el navegador y un diario con datos locales y mejora de texto con un modelo en mi red.",
+      "problem": "Quería controlar mis finanzas y llevar un diario sin entregar datos sensibles a servicios de terceros. Preferí construir las mías: un análisis fino de mis propios estados de cuenta, un panel financiero propio y un diario privado con ayuda de IA.",
+      "solution": "Construí tres herramientas independientes:\n\n**Plataforma financiera (microservicios)**\n- Arquitectura con servicios separados de autenticación, finanzas, IA y notificaciones, más un frontend React, orquestados con Docker Compose.\n- Servicios en FastAPI y Spring Boot, base de datos MySQL con esquema inicial en SQL y migraciones Flyway en el servicio de autenticación.\n- Frontend React con páginas de transacciones, metas, suscripciones, calendario, asistente de IA y un panel de estadísticas con gráficas.\n- Seguridad diseñada desde el inicio: tokens JWT de corta vida con refresh revocable, contraseñas con BCrypt y límite de intentos de login.\n- Diseñado para que el análisis lo haga un modelo de lenguaje en mi red local, de modo que los datos financieros no salgan de ella.\n\n**Analizador de estados de cuenta (React + Vitest)**\n- Carga CSV de varias cuentas y los procesa en el navegador, sin servidor.\n- Clasifica transacciones, separa el ingreso real de las transferencias entre cuentas propias y detecta cargos evitables.\n- Reglas de categorización editables que se aplican retroactivamente; los datos se guardan localmente en IndexedDB.\n- Panel con KPIs y gráficas mensuales y por categoría; lógica de negocio cubierta con pruebas unitarias.\n\n**Diario personal con datos locales (React + Fastify)**\n- Una entrada en Markdown por día, con imágenes, calendario y línea de tiempo; todo se guarda en archivos en mi propia máquina.\n- API Fastify con escritura atómica de archivos y tipos TypeScript compartidos entre frontend y backend.\n- Mejora de texto con un modelo de lenguaje en mi red local (proveedor en la nube opcional, con aviso de privacidad): muestra el antes y el después, y nunca reemplaza nada sin confirmación.",
+      "outcome": "- EstadosCuenta y Diario son aplicaciones funcionales, con pruebas automatizadas en su lógica central.\n- La plataforma financiera está en desarrollo: el código de los servicios y del frontend está escrito, pero aún no lo he verificado de punta a punta ni cubierto con pruebas suficientes.\n- Es una práctica real de privacidad por diseño, IA en mi red con control humano y organización de código con servicios separados."
+    },
+    "en": {
+      "title": "Personal tools: a finance stack and a private journal",
+      "summary": "Three tools I built for my own use, with privacy as a hard requirement: a microservices finance platform on Docker Compose, a browser-based bank statement analyzer, and a journal whose data stays on my machine, with text improvement from a language model on my home network.",
+      "problem": "I wanted to manage my money and keep a journal without handing sensitive data to third-party services. I chose to build my own: fine-grained analysis of my bank statements, a finance dashboard I control, and a private journal with AI help.",
+      "solution": "I built three independent tools:\n\n**Finance platform (microservices)**\n- Separate services for authentication, finance, AI and notifications, plus a React frontend, orchestrated with Docker Compose.\n- FastAPI and Spring Boot services, a MySQL database with an initial SQL schema, and Flyway migrations in the auth service.\n- React frontend with pages for transactions, goals, subscriptions, a calendar, an AI assistant and a statistics dashboard with charts.\n- Security designed in from the start: short-lived JWTs with revocable refresh tokens, BCrypt password hashing and login rate limiting.\n- Designed so that analysis runs on a language model on my home network, keeping financial data inside it.\n\n**Bank statement analyzer (React + Vitest)**\n- Loads CSV exports from several accounts and processes them entirely in the browser, with no server.\n- Categorizes transactions, separates real income from transfers between my own accounts, and flags avoidable fees.\n- Editable categorization rules that apply retroactively; data is stored locally in IndexedDB.\n- Dashboard with KPIs plus monthly and per-category charts; core logic covered by unit tests.\n\n**Personal journal with local data (React + Fastify)**\n- One Markdown entry per day, with images, a calendar and a timeline; everything is stored as files on my own machine.\n- Fastify API with atomic file writes and TypeScript types shared between frontend and backend.\n- Text improvement with a language model on my home network (optional cloud provider, with a privacy warning): it shows before and after, and never overwrites anything without confirmation.",
+      "outcome": "- The statement analyzer and the journal are working applications, with automated tests on their core logic.\n- The finance platform is still in development: the service and frontend code is written, but I have not yet verified it end to end or covered it with enough tests.\n- Together they are hands-on practice in privacy by design, home-network AI with a human in the loop, and splitting a system into independent services."
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "portfolio-site",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.5.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && node scripts/check-contract.mjs",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "export": "node --env-file-if-exists=.env.local scripts/export.mjs",
+    "lint:privacy": "node --env-file-if-exists=.env.local scripts/privacy-lint.mjs",
+    "release:check": "pnpm export && pnpm lint:privacy && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "astro": "^7.3.5",
+    "marked": "^18.0.14"
+  },
+  "devDependencies": {
+    "gray-matter": "^4.0.3",
+    "vitest": "^5.0.3"
+  }
+}

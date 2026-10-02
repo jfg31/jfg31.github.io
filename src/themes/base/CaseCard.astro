@@ -1,0 +1,19 @@
+---
+import type { Case, Locale, UiStrings } from '../contract';
+import { localePath } from '../../i18n/ui';
+
+interface Props {
+  item: Case;
+  locale: Locale;
+  ui: UiStrings;
+}
+
+const { item, locale, ui } = Astro.props;
+const text = item.text[locale];
+---
+<article class="card">
+  <p class="meta">{ui.categories[item.category]} · {ui.statuses[item.status]}</p>
+  <h3><a href={localePath(locale, `projects/${item.slug}`)}>{text.title}</a></h3>
+  <p>{text.summary}</p>
+  <ul class="tags">{item.stack.map((tech) => <li>{tech}</li>)}</ul>
+</article>

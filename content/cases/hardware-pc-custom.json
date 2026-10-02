@@ -1,0 +1,34 @@
+{
+  "slug": "hardware-pc-custom",
+  "featured": 2,
+  "category": "hardware",
+  "stack": [
+    "Ryzen 9 5900X",
+    "RTX 3080",
+    "B550",
+    "Water loop",
+    "Windows",
+    "Ollama",
+    "Lubuntu"
+  ],
+  "period": "2022-01 → presente",
+  "status": "completado",
+  "links": {},
+  "updated": "2026-10-01",
+  "text": {
+    "es": {
+      "title": "PC custom con water loop y diagnóstico de hardware",
+      "summary": "Armé en 2022 una PC con refrigeración líquida (Ryzen 9 5900X, RTX 3080 10 GB, 32 GB) que uso para desarrollo y como estación de inferencia de modelos de lenguaje locales. También armo, reparo y diagnostico PCs para familia y conocidos.",
+      "problem": "Necesitaba una máquina de desarrollo con GPU suficiente para correr modelos de lenguaje locales.",
+      "solution": "Armé una PC custom en 2022: Ryzen 9 5900X de 12 núcleos y 24 hilos, RTX 3080 de 10 GB, 32 GB de RAM, placa B550, almacenamiento en M.2 y HDD, todo con refrigeración líquida.\n\nLa GPU funciona como estación de inferencia local con Ollama. Con 10 GB de VRAM, los modelos de hasta unos 8B parámetros caben en la tarjeta; los más grandes, como uno de 14B, se reparten parcialmente con la RAM del sistema a cambio de velocidad.\n\nAdemás armo, reparo y diagnostico PCs para familiares y conocidos, por gusto y sin fines comerciales. También reutilicé una laptop vieja como servidor dedicado para mis proyectos, lo que muestra el mismo criterio de aprovechar bien el hardware disponible.",
+      "outcome": "Mi máquina principal de desarrollo desde 2022, capaz de ejecutar modelos locales de 7–8B por completo en GPU y de manejar modelos de 14B cuando la calidad lo justifica. La experiencia armando y diagnosticando equipos me da criterio práctico para dimensionar hardware en proyectos de IA local."
+    },
+    "en": {
+      "title": "Custom water-cooled PC and hardware troubleshooting",
+      "summary": "In 2022 I built a liquid-cooled PC (Ryzen 9 5900X, RTX 3080 10 GB, 32 GB RAM) that I use for development and as a local LLM inference box. I also build, repair and diagnose PCs for family and friends.",
+      "problem": "I needed a development machine with enough GPU to run local language models.",
+      "solution": "I built a custom PC in 2022: a 12-core, 24-thread Ryzen 9 5900X, an RTX 3080 with 10 GB of VRAM, 32 GB of RAM, a B550 board, M.2 and HDD storage, all under a liquid-cooling loop.\n\nThe GPU doubles as a local inference station with Ollama. With 10 GB of VRAM, models up to roughly 8B parameters fit entirely on the card; larger ones, such as a 14B model, spill partly into system RAM at some cost in speed.\n\nI also build, repair and diagnose PCs for family and friends, as a hobby and never commercially. And I repurposed an old laptop as a dedicated server for my projects, which reflects the same habit of getting the most out of available hardware.",
+      "outcome": "My main development machine since 2022, able to run 7-8B local models entirely on the GPU and to handle 14B models when quality matters. Building and troubleshooting hardware gives me practical judgment for sizing infrastructure in local-AI projects."
+    }
+  }
+}

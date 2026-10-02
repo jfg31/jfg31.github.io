@@ -1,0 +1,35 @@
+{
+  "slug": "automatizacion-soporte-jira-telegram",
+  "featured": 1,
+  "category": "automatizacion",
+  "stack": [
+    "n8n",
+    "Jira Cloud API",
+    "Telegram Bot API",
+    "Ollama",
+    "qwen2.5",
+    "JavaScript",
+    "Node.js",
+    "HTML/CSS"
+  ],
+  "period": "2026-05 → presente",
+  "status": "activo",
+  "links": {},
+  "updated": "2026-10-01",
+  "text": {
+    "es": {
+      "title": "Automatización de soporte: Jira + Telegram + IA local",
+      "summary": "Plataforma de automatización para el equipo de soporte de Helvetia del Caribe: bot de Telegram con 16+ workflows n8n, consultas en lenguaje natural a Jira con un LLM local, dashboard de estadísticas 2025–2026 y monitor en tiempo real de los workflows.",
+      "problem": "El equipo de soporte atendía un volumen alto de tickets en Jira y respondía las preguntas de gestión de forma manual: armar filtros, exportar datos, preparar reportes. No había visibilidad histórica ni alertas proactivas, y los datos de los tickets eran sensibles, así que la IA no podía salir a una API en la nube.",
+      "solution": "Una plataforma sobre n8n con cuatro piezas conectadas a Jira:\n\n- Un bot de Telegram con más de 16 workflows: comandos como `/resumen DEMO-101` o `/ver DEMO-101`, flujos interactivos, monitores programados (tickets sin actividad, cola saturada, revisiones pendientes) y reportes diarios y semanales en HTML.\n- Un agente que traduce preguntas en español o inglés a consultas JQL usando un modelo local (Ollama), consulta Jira y devuelve un reporte con análisis.\n- Un dashboard de estadísticas de todos los tickets de 2025 y 2026, alimentado por un refresco automático cada día laborable.\n- Un monitor en tiempo real que muestra el estado de cada workflow (en ejecución, exitoso, con error).\n\nHardware local, modelos locales, sin IA en la nube: los datos de los tickets no se envían a ningún servicio de IA externo.",
+      "outcome": "Más de 16 workflows operativos y reportes HTML generados de forma recurrente desde mayo de 2026. El equipo puede consultar tickets y pedir análisis desde el chat sin escribir JQL, y tiene un dashboard histórico de 2025–2026. Hoy lo usa un grupo reducido; las alertas de fallos de workflows hacia Telegram son el siguiente paso."
+    },
+    "en": {
+      "title": "Support automation: Jira + Telegram + local AI",
+      "summary": "Automation platform for the Helvetia del Caribe support team: a Telegram bot backed by 16+ n8n workflows, natural-language Jira queries via a local LLM, a 2025–2026 ticket statistics dashboard, and a real-time monitor for the workflows themselves.",
+      "problem": "The support team handled a high volume of Jira tickets and answered management questions by hand: building filters, exporting data, assembling reports. There was no historical view and no proactive alerting. Ticket data was also sensitive, so sending it to a cloud AI API was off the table.",
+      "solution": "An n8n-based platform with four connected pieces, all fed by Jira:\n\n- A Telegram bot with 16+ workflows: commands such as `/resumen DEMO-101` or `/ver DEMO-101`, interactive multi-step flows, scheduled monitors (stale tickets, overloaded queue, pending reviews) and daily and weekly HTML reports.\n- An agent that turns plain-language questions in Spanish or English into JQL using a local model (Ollama), queries Jira, and replies with a report that includes an AI-written analysis.\n- A statistics dashboard covering every ticket from 2025 and 2026, refreshed automatically every working day.\n- A real-time monitor showing the state of each workflow: running, succeeded, or failed.\n\nLocal hardware, local models, no cloud AI: ticket data is never sent to an external AI service.",
+      "outcome": "16+ workflows in operation, with HTML reports generated on a recurring basis since May 2026. The team can query tickets and request analysis from chat without writing JQL, and has a historical 2025–2026 dashboard. A small group uses it today; forwarding workflow-failure alerts to Telegram is the next step."
+    }
+  }
+}

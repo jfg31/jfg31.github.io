@@ -1,0 +1,3 @@
+#!/bin/sh
+# Bloquea cualquier push si el linter de privacidad o los tests fallan.
+pnpm lint:privacy && pnpm test

@@ -1,0 +1,50 @@
+---
+import './tokens.css';
+import type { Locale, Profile, UiStrings } from '../contract';
+import { localePath, otherLocale } from '../../i18n/ui';
+
+interface Props {
+  locale: Locale;
+  ui: UiStrings;
+  profile: Profile;
+  title?: string;
+  description?: string;
+  subpath?: string;
+}
+
+const { locale, ui, profile, title, description, subpath = '' } = Astro.props;
+const alt = otherLocale(locale);
+const fullTitle = title ? `${title} · ${profile.name}` : ui.siteTitle;
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description ?? profile.text[locale].headline} />
+    <link rel="alternate" hreflang={alt} href={localePath(alt, subpath)} />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href={localePath(locale)}>{profile.name}</a>
+      <nav aria-label={ui.nav.home}>
+        <a href={localePath(locale)}>{ui.nav.home}</a>
+        <a href={localePath(locale, 'projects')}>{ui.nav.projects}</a>
+        <a href={localePath(locale, 'about')}>{ui.nav.about}</a>
+        <a href={localePath(alt, subpath)} hreflang={alt} lang={alt}>{ui.switchLanguage}</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <h2>{ui.contact}</h2>
+      <ul>
+        <li><a href={`mailto:${profile.email}`}>{profile.email}</a></li>
+        <li><a href={`https://github.com/${profile.github}`}>GitHub</a></li>
+        {profile.linkedin && <li><a href={profile.linkedin}>LinkedIn</a></li>}
+      </ul>
+    </footer>
+  </body>
+</html>

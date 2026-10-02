@@ -1,0 +1,37 @@
+{
+  "slug": "softlyalma",
+  "featured": 1,
+  "category": "producto",
+  "stack": [
+    "React Native",
+    "Expo",
+    "TypeScript",
+    "Firebase",
+    "Firestore",
+    "Cloud Functions",
+    "React",
+    "Vite"
+  ],
+  "period": "2026-03 → presente",
+  "status": "live",
+  "links": {
+    "demo": "https://apps.apple.com/us/app/softlyalma/id6762501971"
+  },
+  "updated": "2026-10-01",
+  "text": {
+    "es": {
+      "title": "SoftlyAlma: app de frases diarias en la App Store",
+      "summary": "App móvil publicada en la App Store: frases y poemas curados a mano, renovados cada día, con un panel web de administración y un backend serverless. Producto propio, de punta a punta, en producción.",
+      "problem": "Quería llevar un producto propio hasta el final, no solo prototipos: una app real en una tienda real. La idea era simple: una app de frases, poemas y citas diarias, curadas a mano, que se abre y se lee en segundos, sin cuentas ni registros.\n\nEso implicaba resolver el ciclo completo: la app, un backend que renueve el contenido cada mañana sin intervención, una herramienta cómoda para curar y programar ese contenido, y el proceso de revisión de Apple.",
+      "solution": "Un solo repositorio con tres piezas sobre Firebase:\n\n- **App móvil** en React Native (Expo) y TypeScript: feed diario de tarjetas a pantalla completa, fondos, tipografías y colores personalizables, compartir la tarjeta como imagen, interfaz en inglés y español, modo offline y notificaciones push.\n- **Panel web de administración** en React y Vite, con acceso restringido, para escribir, programar y traducir contenido y ver estadísticas de uso.\n- **Backend serverless** con Cloud Functions: arma el feed del día cada mañana a la misma hora y tiene un respaldo si no hay contenido programado.\n\nTambién me encargué de builds, TestFlight, la revisión de App Store y las correcciones posteriores al lanzamiento.",
+      "outcome": "La app está publicada y en producción en la App Store (iOS), con [landing page](https://softlyalma.web.app/) y panel de administración activos.\n\nIncluye 345 frases y poemas bilingües, se renueva sola cada día y tuvo una segunda iteración en la que se agregaron notificaciones push. Es la prueba más completa de que puedo diseñar, construir, publicar y mantener un producto, no solo automatizar procesos."
+    },
+    "en": {
+      "title": "SoftlyAlma: a daily-quotes app on the App Store",
+      "summary": "A mobile app live on the App Store: hand-curated quotes and poems refreshed every day, with a web admin panel and a serverless backend. A solo product, built and shipped end to end, running in production.",
+      "problem": "I wanted to take a product all the way to the end, not just prototype it: a real app in a real store. The idea was simple: daily quotes, poems and short texts, curated by hand, that you open and read in seconds, with no account or sign-up.\n\nThat meant solving the whole loop: the app itself, a backend that refreshes the content every morning without intervention, a comfortable way to curate and schedule that content, and Apple's review process.",
+      "solution": "One repository, three pieces on top of Firebase:\n\n- **Mobile app** in React Native (Expo) and TypeScript: a daily feed of full-screen cards, customizable backgrounds, fonts and colors, sharing a card as an image, English and Spanish UI, offline mode and push notifications.\n- **Web admin panel** in React and Vite, with restricted access, to write, schedule and translate content and to see usage stats.\n- **Serverless backend** on Cloud Functions: it assembles the day's feed at the same time every morning and falls back gracefully when nothing is scheduled.\n\nI also handled builds, TestFlight, App Store review and the post-launch fixes.",
+      "outcome": "The app is published and running in production on the App Store (iOS), with a live [landing page](https://softlyalma.web.app/) and admin panel.\n\nIt ships 345 bilingual quotes and poems, refreshes itself daily, and had a second iteration that added push notifications. It is the most complete proof that I can design, build, ship and maintain a product, not just automate processes."
+    }
+  }
+}

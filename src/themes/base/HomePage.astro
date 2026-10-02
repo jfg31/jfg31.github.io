@@ -1,0 +1,26 @@
+---
+import Layout from './Layout.astro';
+import CaseCard from './CaseCard.astro';
+import type { ThemeProps } from '../contract';
+import { featuredCases } from '../../lib/cases';
+import { localePath } from '../../i18n/ui';
+import { md } from '../../lib/markdown';
+
+type Props = ThemeProps;
+const { locale, ui, profile, cases } = Astro.props;
+const text = profile.text[locale];
+---
+<Layout locale={locale} ui={ui} profile={profile}>
+  <section>
+    <h1>{profile.name}</h1>
+    <p class="lead">{text.headline}</p>
+    <div set:html={md(text.about)} />
+  </section>
+  <section>
+    <h2>{ui.featured}</h2>
+    <div class="grid">
+      {featuredCases(cases).map((item) => <CaseCard item={item} locale={locale} ui={ui} />)}
+    </div>
+    <p><a href={localePath(locale, 'projects')}>{ui.allProjects} →</a></p>
+  </section>
+</Layout>

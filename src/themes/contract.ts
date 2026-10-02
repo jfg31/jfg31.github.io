@@ -1,0 +1,64 @@
+// Contrato entre la data y la presentación. Todo tema en src/themes/<nombre>/
+// exporta HomePage, ProjectsPage, CasePage y AboutPage que reciben estas props.
+export type Locale = 'en' | 'es';
+export const LOCALES: Locale[] = ['en', 'es'];
+
+export type Category = 'automatizacion' | 'infraestructura' | 'producto' | 'clientes' | 'herramientas-ia' | 'hardware';
+export const CATEGORY_ORDER: Category[] = ['automatizacion', 'infraestructura', 'producto', 'clientes', 'herramientas-ia', 'hardware'];
+
+export const STATUSES = ['activo', 'live', 'prototipo', 'completado'] as const;
+export type Status = (typeof STATUSES)[number];
+
+export interface CaseText { title: string; summary: string; problem: string; solution: string; outcome: string }
+
+export interface Case {
+  slug: string;
+  featured: 1 | 2 | 3;
+  category: Category;
+  stack: string[];
+  period: string;
+  status: Status;
+  links: { demo?: string; repo?: string };
+  updated: string;
+  text: Record<Locale, CaseText>;
+}
+
+export interface ProfileText { headline: string; about: string; education: string; experience: string; certifications: string; hardware: string }
+
+export interface Profile {
+  name: string;
+  email: string;
+  github: string;
+  linkedin: string;
+  updated: string;
+  text: Record<Locale, ProfileText>;
+}
+
+export interface UiStrings {
+  siteTitle: string;
+  nav: { home: string; projects: string; about: string };
+  switchLanguage: string;
+  featured: string;
+  allProjects: string;
+  contact: string;
+  stack: string;
+  period: string;
+  updated: string;
+  problem: string;
+  solution: string;
+  outcome: string;
+  demo: string;
+  repo: string;
+  categories: Record<Category, string>;
+  statuses: Record<Status, string>;
+  profileSections: { about: string; education: string; experience: string; certifications: string; hardware: string };
+}
+
+export interface ThemeProps {
+  locale: Locale;
+  ui: UiStrings;
+  profile: Profile;
+  cases: Case[];
+}
+
+export type CasePageProps = ThemeProps & { item: Case };
