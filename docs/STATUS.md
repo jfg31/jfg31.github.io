@@ -2,21 +2,20 @@
 
 ## Último update
 
-2026-10-02
+2026-10-03
 
 ## En qué paso está
 
-Plan B completado: pipeline del sitio listo (export desde el cerebro, linter de privacidad, tema base, build con verificación de contrato) y workflow de deploy a GitHub Pages escrito. Falta publicar: crear el repo público `jfg31.github.io`, el primer push y activar Pages (requiere confirmación explícita de Jose). El diseño visual (Plan C) está pendiente; por ahora el sitio usa el tema `base`.
+Publicado en https://jfg31.github.io (GitHub Pages, deploy automático en cada push a `main`). El sitio usa el tema `base`; el diseño visual (Plan C) está pendiente.
 
 ## Qué se hizo en la última sesión
 
-- Workflow `.github/workflows/deploy.yml` (lint de privacidad, tests, build y deploy a Pages). Permisos: `contents: read` a nivel global; `pages: write` e `id-token: write` solo en el job de deploy. `pnpm/action-setup` está fijado al SHA del commit (v6.0.10); el resto de actions usa tags de versión mayor.
-- Documentación del proyecto: comandos, estructura y arquitectura (flujo de datos y cómo crear un tema).
-- Verificación completa con `pnpm release:check`.
+- Revisión de seguridad y revisión final de la rama; correcciones: verificador de contrato más estricto, permisos mínimos por job, hook de auto-push desactivado en este repo, texto público neutralizado.
+- Historial publicado como un solo commit con identidad personal; linter de privacidad sobre el historial: 0 hallazgos.
+- Primer push a `main`, workflow de deploy en verde y sitio verificado en vivo (EN/ES).
 
 ## Próximos pasos inmediatos
 
-- Revisión de seguridad del repo y del historial antes de publicar.
-- Publicación: repo público, primer push y activación de Pages.
-- Plan C: diseño del sitio (nuevo tema).
+- Plan C: diseño del sitio (nuevo tema) + type-check de temas en CI (`@astrojs/check`, aprobado).
 - Resolver los pendientes de confirmar con Jose (ver `docs/TODO.md`).
+- Después: resume, LinkedIn y perfil de GitHub desde el documento maestro.

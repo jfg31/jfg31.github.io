@@ -5,9 +5,9 @@ Checklist accionable de tareas pendientes. Este archivo debe quedar vacío (todo
 ## Pendientes
 
 - [x] Plan B: pipeline del sitio (exportar desde el cerebro, lint de privacidad, build)
-- [ ] Antes del primer push público: corregir email de autor en el historial y reescribir/aplanar historial (decisión de Jose)
-- [ ] Publicar: crear el repo público `jfg31.github.io`, primer push y activar GitHub Pages (requiere confirmación de Jose)
-- [ ] Plan C: diseño del sitio (nuevo tema)
+- [x] Antes del primer push público: corregir email de autor y aplanar historial
+- [x] Publicar en https://jfg31.github.io
+- [ ] Plan C: diseño del sitio (nuevo tema) + `astro check` en CI
 - [ ] Dominio propio
 - [ ] Derivar el resume desde el documento maestro
 - [ ] Derivar LinkedIn desde el documento maestro
