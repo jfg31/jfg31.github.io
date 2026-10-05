@@ -21,7 +21,7 @@ const steps = item.diagram?.[locale];
       </p>
       <h1 id="case-h">{text.title}</h1>
       <p class="summary">{text.summary}</p>
-      <p class="stack"><span class="vh">{ui.stack}: </span>{item.stack.join(' · ')}</p>
+      <p class="stack"><span class="vh">{ui.stack}: </span><span translate="no">{item.stack.join(' · ')}</span></p>
     </header>
 
     {steps ? (

@@ -49,8 +49,15 @@
   --label: 13px;
   --gut: clamp(16px, 5.6vw, 80px);
   --max: 1440px;
+  /* curvas: gel = pequeño rebote (el material); out = entradas/estados; drawer = desplazamientos en pantalla */
   --ease-gel: cubic-bezier(.32, 1.32, .52, 1);
-  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
+  --ease-drawer: cubic-bezier(.32, .72, 0, 1);
+  /* tiempos: press = respuesta al toque; hover = color; morph = la barra/pestañas cambian de forma; theme = cambio de modo */
+  --t-press: 160ms;
+  --t-hover: 200ms;
+  --t-morph: 420ms;
+  --t-theme: 450ms;
 }
 
 /* Paleta oscura: se repite en dos selectores (preferencia explícita y "system" con SO oscuro). */

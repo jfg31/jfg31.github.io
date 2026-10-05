@@ -32,7 +32,7 @@ const RowH = (level === 2 ? 'h3' : 'h4') as 'h3' | 'h4';
               <div>
                 <RowH class="row-h"><a href={localePath(locale, `projects/${item.slug}`)}>{text.title}</a></RowH>
                 <p>{text.summary}</p>
-                <p class="stk">{shortStack(item.stack)}</p>
+                <p class="stk" translate="no">{shortStack(item.stack)}</p>
               </div>
               <div class="meta">
                 <span class={`status s-${item.status}`}>{ui.statuses[item.status]}</span>

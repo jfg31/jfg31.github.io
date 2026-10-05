@@ -21,7 +21,7 @@ const sections = [
 <Layout locale={locale} ui={ui} profile={profile} title={ui.nav.about} subpath="about">
   <div class="wrap">
     <header class="about-top">
-      <h1>{profile.name}</h1>
+      <h1 translate="no">{profile.name}</h1>
       <div class="headline">
         <p>{headA}{headB && <> <span class="soft">{headB}</span></>}</p>
         {role && <p class="hero-meta mono">{role}</p>}

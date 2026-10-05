@@ -104,19 +104,27 @@ function canRefract(): boolean {
 }
 
 /* ---------------- bucle de animación compartido ---------------- */
+// La física está afinada a 60 fps; `f` = fotogramas de 60 fps transcurridos, para que el muelle tenga el mismo
+// tiempo en pantallas de 120 Hz que en las de 60 Hz (antes iba al doble de rápido en 120 Hz).
+const FRAME_MS = 1000 / 60;
 const active = new Set<Lens>();
 let raf = 0;
+let lastT = 0;
 function kick(): void {
   if (!raf) raf = requestAnimationFrame(loop);
 }
-function loop(): void {
+function loop(t: number): void {
   raf = 0;
+  const f = lastT ? clamp((t - lastT) / FRAME_MS, 0.25, 3) : 1;
   let busy = false;
   active.forEach((l) => {
-    if (l.visible && l.step()) busy = true;
+    if (l.visible && l.step(f)) busy = true;
   });
+  lastT = busy ? t : 0;
   if (busy) kick();
 }
+/** Factor de suavizado `a` (por fotograma de 60 fps) convertido a `f` fotogramas. */
+const ease = (a: number, f: number): number => 1 - Math.pow(1 - a, f);
 
 interface StepNode { i: number; x: number; y: number; w: number; h: number; g: SVGGElement }
 
@@ -334,18 +342,21 @@ class Lens {
     this.onStep(i);
   }
 
-  /** Un paso de física (muelle amortiguado). Devuelve true mientras siga en movimiento. */
-  step(): boolean {
+  /**
+   * Un paso de física (muelle amortiguado, k = 0.12 y amortiguación 0.74 por fotograma de 60 fps).
+   * `f` = fotogramas de 60 fps desde el último paso. Devuelve true mientras siga en movimiento.
+   */
+  step(f = 1): boolean {
     const k = 0.12;
-    const damp = 0.74;
-    this.vx = (this.vx + (this.tx - this.x) * k) * damp;
-    this.vy = (this.vy + (this.ty - this.y) * k) * damp;
-    this.x += this.vx;
-    this.y += this.vy;
-    this.mat += (this.matT - this.mat) * 0.11;
+    const damp = Math.pow(0.74, f);
+    this.vx = (this.vx + (this.tx - this.x) * k * f) * damp;
+    this.vy = (this.vy + (this.ty - this.y) * k * f) * damp;
+    this.x += this.vx * f;
+    this.y += this.vy * f;
+    this.mat += (this.matT - this.mat) * ease(0.11, f);
     const near = this.nearest(this.x, this.y);
     const shT = near.d < this.R * 0.9 ? 1 : 0.55; // sombra más marcada sobre texto, más suave sobre el lienzo
-    this.shadow += (shT - this.shadow) * 0.15;
+    this.shadow += (shT - this.shadow) * ease(0.15, f);
     this.apply(this.vx, this.vy);
     if (this.target < 0 && near.n && near.d < this.R * 0.45) this.setCur(near.n.i);
     const moving =
@@ -381,6 +392,13 @@ class Lens {
     this.onMove(this);
   }
 }
+
+/* ---------------- recorrido automático del hero ---------------- */
+const TOUR_START_MS = 300; // espera tras entrar en pantalla
+const TOUR_REVEAL_MS = 700; // la lente se materializa sobre el primer paso
+const TOUR_HOP_MS = 1500; // tiempo máximo por paso
+const TOUR_SETTLE_MS = 600; // el último salto se asienta
+const TOUR_MAX_MS = 5000;
 
 /* ---------------- un diagrama: elige el SVG visible, monta la lente y conecta puntero y teclado ---------------- */
 const io =
@@ -422,6 +440,10 @@ class Stage {
     this.cap = fig.querySelector<HTMLElement>('[data-cap]');
     this.details = Array.from(fig.querySelectorAll('.diagram-steps > li > span')).map((s) => s.textContent?.trim() ?? '');
     stages.set(fig, this);
+    // solo con la lente la figura es interactiva: entonces entra en el orden de tabulación y lleva la pista
+    fig.tabIndex = 0;
+    const hint = fig.querySelector<HTMLElement>('.hint[id]');
+    if (hint) fig.setAttribute('aria-describedby', hint.id);
     this.bind();
     this.build();
     if ('ResizeObserver' in window) new ResizeObserver(() => this.build()).observe(fig);
@@ -544,9 +566,11 @@ class Stage {
       else if (e.key === 'Home') next = 0;
       else if (e.key === 'End') next = last;
       else return;
+      if (e.altKey || e.metaKey || e.ctrlKey || e.shiftKey) return; // Alt+← (atrás) y similares siguen siendo del navegador
       e.preventDefault();
       this.user();
-      this.lens.toStep(next);
+      // teclado: la lente salta al paso sin viaje (las flechas se repiten; la animación las haría sentir lentas)
+      this.lens.toStep(next, true);
     });
   }
 
@@ -559,19 +583,21 @@ class Stage {
       this.touring = true;
       // durante el recorrido automático el pie no se anuncia (evita leer cinco pasos seguidos sin pedirlo)
       this.cap?.setAttribute('aria-live', 'off');
+      // Todo el recorrido cabe en TOUR_MAX_MS (≤ 5 s, WCAG 2.2.2: movimiento automático sin control de pausa).
+      // Con pocos pasos cada salto dura hasta 1,5 s; con más pasos se acortan para no pasar del límite.
       const count = this.lens.nodes.length;
-      const t0 = 380;
+      const hop = Math.min(TOUR_HOP_MS, Math.floor((TOUR_MAX_MS - TOUR_START_MS - TOUR_REVEAL_MS - TOUR_SETTLE_MS) / Math.max(1, count - 1)));
       this.tourTimers.push(
         window.setTimeout(() => {
           if (!this.lens) return;
           this.lens.mat = 0;
           this.lens.toStep(0, true);
-        }, t0),
+        }, TOUR_START_MS),
       );
       for (let i = 1; i < count; i++) {
-        this.tourTimers.push(window.setTimeout(() => this.touring && this.lens?.toStep(i), t0 + 900 + (i - 1) * 1500));
+        this.tourTimers.push(window.setTimeout(() => this.touring && this.lens?.toStep(i), TOUR_START_MS + TOUR_REVEAL_MS + (i - 1) * hop));
       }
-      this.tourTimers.push(window.setTimeout(() => this.endTour(), t0 + 900 + count * 1500));
+      this.tourTimers.push(window.setTimeout(() => this.endTour(), TOUR_START_MS + TOUR_REVEAL_MS + (count - 1) * hop + TOUR_SETTLE_MS));
     };
     if ('IntersectionObserver' in window) {
       const tio = new IntersectionObserver(

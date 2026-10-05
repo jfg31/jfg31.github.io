@@ -45,6 +45,15 @@ const initialLabel = `${ui.theme.label}: ${ui.theme.system} — ${ui.theme.switc
     return ORDER[(ORDER.indexOf(mode) + 1) % ORDER.length];
   }
 
+  /** La barra del navegador sigue al modo: explícito = ese color en las dos metas; sistema = cada meta con su media. */
+  function syncThemeColor(mode: Mode): void {
+    document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach((m) => {
+      const forced = mode === 'system' ? null : mode;
+      const dark = forced ? forced === 'dark' : m.media.includes('dark');
+      m.content = (dark ? m.dataset.bgDark : m.dataset.bgLight) ?? m.content;
+    });
+  }
+
   function sync(btn: HTMLButtonElement): void {
     const mode = currentMode();
     const label = `${btn.dataset.label}: ${btn.dataset[mode]} — ${btn.dataset.switchTo} ${btn.dataset[nextMode(mode)]}`;
@@ -57,6 +66,7 @@ const initialLabel = `${ui.theme.label}: ${ui.theme.system} — ${ui.theme.switc
     btn.addEventListener('click', () => {
       const next = nextMode(currentMode());
       document.documentElement.dataset.theme = next;
+      syncThemeColor(next);
       try {
         localStorage.setItem('theme', next);
       } catch {

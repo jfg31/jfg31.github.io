@@ -1,6 +1,7 @@
 ---
 // Trabajo destacado: control segmentado de vidrio (tablist) + un panel por caso (portado de E-liquid-glass "selected work").
-// Sin JS no hay pestañas: los paneles se ven todos seguidos. Con JS: flechas, Inicio/Fin, aria-selected y tabindex móvil.
+// Sin JS no hay pestañas: los paneles son secciones normales, todos seguidos, sin roles de tablist.
+// Con JS el script pone role=tablist/tab/tabpanel, aria-selected, aria-controls y tabindex móvil (flechas, Inicio/Fin).
 import type { Case, Locale, UiStrings } from '../contract';
 import { formatPeriod } from '../../lib/cases';
 import { localePath } from '../../i18n/ui';
@@ -25,17 +26,10 @@ const { locale, ui, items, total } = Astro.props;
       <p class="kicker">{ui.sections.work} · {pad2(items.length)} / {pad2(total)}</p>
       <h2 id="work-h">{ui.featured}</h2>
     </div>
-    <div class="glass seg" role="tablist" aria-label={ui.featured} data-lg>
+    <div class="glass seg" data-tablist data-label={ui.featured} data-lg>
       <span class="drop" aria-hidden="true"></span>
       {items.map((item, i) => (
-        <button
-          type="button"
-          role="tab"
-          id={`tab-${item.slug}`}
-          aria-controls={`panel-${item.slug}`}
-          aria-selected={i === 0 ? 'true' : 'false'}
-          tabindex={i === 0 ? undefined : -1}
-        >
+        <button type="button" id={`tab-${item.slug}`} data-tab data-panel={`panel-${item.slug}`} tabindex={i === 0 ? undefined : -1}>
           <span class="n" aria-hidden="true">{pad2(i + 1)}</span>
           <span class="l">{shortTitle(item.text[locale].title)}</span>
         </button>
@@ -48,12 +42,7 @@ const { locale, ui, items, total } = Astro.props;
       const text = item.text[locale];
       const steps = item.diagram?.[locale];
       return (
-        <article
-          class:list={['panel', { 'no-figure': !steps }]}
-          id={`panel-${item.slug}`}
-          role="tabpanel"
-          aria-labelledby={`tab-${item.slug}`}
-        >
+        <article class:list={['panel', { 'no-figure': !steps }]} id={`panel-${item.slug}`}>
           <div class="panel-text">
             <p class="kicker">
               {ui.categories[item.category]} · <span class={`status s-${item.status}`}>{ui.statuses[item.status]}</span> · {formatPeriod(item.period, locale)}
@@ -67,7 +56,7 @@ const { locale, ui, items, total } = Astro.props;
               </div>
               <div>
                 <dt>{ui.stack}</dt>
-                <dd class="stack">{item.stack.join(' · ')}</dd>
+                <dd class="stack" translate="no">{item.stack.join(' · ')}</dd>
               </div>
             </dl>
             <p class="more">
@@ -91,14 +80,27 @@ const { locale, ui, items, total } = Astro.props;
   import { gelMove, prefersMotion } from './scripts/controls';
 
   function initWorkTabs(root: HTMLElement): void {
-    const list = root.querySelector<HTMLElement>('[role="tablist"]');
+    const list = root.querySelector<HTMLElement>('[data-tablist]');
     const head = root.querySelector<HTMLElement>('.sec-head');
     if (!list || !head) return;
     const drop = list.querySelector<HTMLElement>('.drop');
-    const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>('[data-tab]'));
     if (tabs.length === 0) return;
-    const panelOf = (t: HTMLButtonElement): HTMLElement | null => document.getElementById(t.getAttribute('aria-controls') ?? '');
+    const panelOf = (t: HTMLButtonElement): HTMLElement | null => document.getElementById(t.dataset.panel ?? '');
     let current = tabs[0];
+
+    // mejora progresiva: los roles de pestañas solo existen cuando este script las hace funcionar
+    list.setAttribute('role', 'tablist');
+    if (list.dataset.label) list.setAttribute('aria-label', list.dataset.label);
+    tabs.forEach((t, i) => {
+      t.setAttribute('role', 'tab');
+      t.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      const p = panelOf(t);
+      if (!p) return;
+      t.setAttribute('aria-controls', p.id);
+      p.setAttribute('role', 'tabpanel');
+      p.setAttribute('aria-labelledby', t.id);
+    });
 
     function placeDrop(animate: boolean): void {
       if (drop) gelMove(drop, list as HTMLElement, current, animate, prefersMotion());
@@ -115,7 +117,8 @@ const { locale, ui, items, total } = Astro.props;
         if (p) p.hidden = !on;
       }
       if (focus) tab.focus();
-      placeDrop(true);
+      // con teclado (focus=true) la gota salta sin animación: las flechas se repiten mucho y no deben esperar al gel
+      placeDrop(!focus);
     }
 
     // ¿Caben todas las etiquetas? Si no, modo compacto (solo la activa lleva texto). Se mide sin transiciones.

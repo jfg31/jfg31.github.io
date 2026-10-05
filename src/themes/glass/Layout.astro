@@ -36,6 +36,9 @@ const pages = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- color de la barra del navegador = fondo de la página (--bg); ThemeToggle lo fija cuando el modo es explícito -->
+    <meta name="theme-color" content="#EEEDE8" media="(prefers-color-scheme: light)" data-bg-light="#EEEDE8" data-bg-dark="#131312" />
+    <meta name="theme-color" content="#131312" media="(prefers-color-scheme: dark)" data-bg-light="#EEEDE8" data-bg-dark="#131312" />
     <script is:inline>
       // Anti-FOUC: fija el tema y las clases de capacidad antes del primer paint.
       (function () {
@@ -47,6 +50,11 @@ const pages = [
           if (s === 'light' || s === 'dark' || s === 'system') t = s;
         } catch (e) {}
         d.dataset.theme = t;
+        if (t !== 'system') {
+          document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) {
+            m.setAttribute('content', m.getAttribute(t === 'dark' ? 'data-bg-dark' : 'data-bg-light'));
+          });
+        }
         try {
           if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('motion');
         } catch (e) {}
@@ -71,7 +79,7 @@ const pages = [
     <svg id="lg-defs" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs></defs></svg>
 
     <header class="topbar">
-      <a class="mark" href={localePath(locale)}>{siteHost}</a>
+      <a class="mark" href={localePath(locale)} translate="no">{siteHost}</a>
       <div class="glass controls" data-lg>
         <div class="lang" role="group" aria-label={ui.language}>
           <span aria-current="true" lang={locale}>{locale}</span>
@@ -92,9 +100,9 @@ const pages = [
       <div class="wrap">
         <p class="kicker">{ui.contact}</p>
         <h2 id="contact-h">{profile.text[locale].headline}</h2>
-        <a class="email" href={`mailto:${profile.email}`}>{profile.email}</a>
+        <a class="email" href={`mailto:${profile.email}`} translate="no">{profile.email}</a>
         <div class="actions">
-          <a class="glass btn" href={`https://github.com/${profile.github}`}>GitHub <span class="mono">{profile.github}</span></a>
+          <a class="glass btn" href={`https://github.com/${profile.github}`}><span translate="no">GitHub</span> <span class="mono" translate="no">{profile.github}</span></a>
           {profile.linkedin && <a class="glass btn" href={profile.linkedin}>LinkedIn</a>}
         </div>
         <div class="foot mono">
@@ -104,7 +112,7 @@ const pages = [
               <li><a href={localePath(locale, p.key)} aria-current={p.key === page ? 'page' : undefined}>{p.label}</a></li>
             ))}
           </ul>
-          <span>© {year} {profile.name}</span>
+          <span>© {year} <span translate="no">{profile.name}</span></span>
         </div>
       </div>
     </footer>

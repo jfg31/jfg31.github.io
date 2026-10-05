@@ -38,8 +38,9 @@ portfolio-site/
 │   ├── lib/              ← carga de data, filtrado, orden por "destacado", markdown
 │   ├── pages/[lang]/     ← rutas; solo pasan data al tema, sin presentación
 │   └── themes/
-│       ├── contract.ts   ← tipos del contrato data ↔ tema (Profile, Case, Locale, props de página)
-│       └── base/         ← tema mínimo funcional (HomePage, ProjectsPage, CasePage, AboutPage, tokens.css)
+│       ├── contract.ts   ← tipos del contrato data ↔ tema (Profile, Case, DiagramStep, UiStrings, props de página)
+│       ├── base/         ← tema mínimo funcional (HomePage, ProjectsPage, CasePage, AboutPage, tokens.css)
+│       └── glass/        ← tema activo "Liquid Glass" (ver más abajo)
 ├── tests/                ← Vitest
 ├── .githooks/            ← pre-push (lint de privacidad)
 ├── .github/workflows/    ← deploy a GitHub Pages
@@ -59,6 +60,8 @@ portfolio-site/
 - **El cerebro es la fuente de verdad.** El repo no contiene datos editables a mano; `content/` es un derivado reproducible.
 - **Privacidad en capas.** Export filtrado, linter local con lista privada, hook pre-push, linter genérico en CI y revisión del historial antes de publicar.
 - **`pnpm build` valida el contrato.** Tras `astro build`, `scripts/check-contract.mjs` verifica que existan todas las páginas por idioma y que cada caso público aparezca con su título.
+- **`pnpm check` hace type-check de los temas.** Corre `astro check` (TypeScript + plantillas `.astro`) sobre todos los temas, no solo el activo; CI lo corre antes del build y `pnpm release:check` también.
+- **`PORTFOLIO_THEME` para probar otro tema sin activarlo.** `astro.config.mjs` usa `process.env.PORTFOLIO_THEME` si existe y, si no, el `theme` de `portfolio.config.mjs`. Ejemplo: `PORTFOLIO_THEME=base pnpm build` construye (y verifica el contrato de) el tema `base` sin tocar la configuración. El deploy siempre usa `portfolio.config.mjs`.
 
 ## Cómo crear un tema nuevo
 
@@ -68,3 +71,50 @@ portfolio-site/
 4. Correr `pnpm build`: valida el contrato de tema contra el sitio generado.
 
 Para un retoque menor basta con editar `tokens.css` del tema activo (colores, tipografía, espaciado como variables CSS).
+
+## Diagramas como datos
+
+Un caso puede llevar un diagrama de pasos (opcional). No es una imagen: es una lista en el documento del caso en el cerebro, que `pnpm export` valida y guarda en `content/cases/<slug>.json` como `diagram: { es: DiagramStep[], en: DiagramStep[] }` (`DiagramStep = { label, detail }`). El tema decide cómo dibujarlo.
+
+### Formato en el vault
+
+Dentro de la sección pública de cada idioma, una subsección `###` con una lista numerada:
+
+```markdown
+## Versión pública (ES)
+...
+### Diagrama
+1. **Documentos** — PDF, Word y Excel, con OCR para escaneados.
+2. **Búsqueda** — Semántica más palabras clave.
+3. **Respuesta** — En español o inglés, con enlaces a las fuentes.
+
+## Public version (EN)
+...
+### Diagram
+1. **Documents** — PDF, Word and Excel, with OCR for scanned files.
+2. **Search** — Semantic plus keyword matching.
+3. **Answer** — In Spanish or English, with links to the sources.
+```
+
+### Reglas (las aplica `scripts/lib/diagram.mjs`; si falla, el export se detiene con el archivo y el motivo)
+
+- Cada línea: `N. **Etiqueta** — detalle`, con raya «—» (U+2014) y un espacio a cada lado.
+- De 2 a 6 pasos.
+- Etiqueta no vacía y de 24 caracteres como máximo; detalle no vacío y de 120 como máximo.
+- Si existe en un idioma, debe existir en el otro, y los dos con el mismo número de pasos.
+- Sin la subsección en ningún idioma, el caso simplemente no tiene diagrama (la página del caso usa filas etiqueta | texto).
+
+El diagrama del inicio ("cómo se hace este sitio") no viene de un caso: son los pasos de `ui.sitePipeline` en `src/i18n/ui.ts`, con las mismas reglas.
+
+## Tema glass ("Liquid Glass")
+
+Tema activo (`theme: 'glass'`). Contenido como papel liso; el vidrio solo va en la capa funcional (controles flotantes, barra de pestañas, selector de trabajo destacado y lente del diagrama).
+
+- `tokens.css` — paleta clara/oscura, vidrio, curvas (`--ease-gel`, `--ease-out`, `--ease-drawer`) y tiempos (`--t-press`, `--t-hover`, `--t-morph`, `--t-theme`). Retoques rápidos aquí.
+- `Layout.astro` — script inline anti-FOUC (tema `light|dark|system` guardado en `localStorage`, clases `js` y `motion`), controles de idioma y tema, barra flotante, banda de contacto.
+- `Diagram.astro` + `scripts/layout.ts` (geometría pura, con tests) + `scripts/lens.ts` (lente de vidrio): la `<ol>` de pasos siempre está en el DOM; con JS se oculta a la vista y la lente lee las posiciones del SVG generado. Teclado: ←/→, Inicio/Fin.
+- `WorkTabs.astro` — trabajo destacado; los roles `tablist/tab/tabpanel` los pone el script (sin JS son secciones normales).
+- `scripts/controls.ts` — barra flotante (scroll-spy, gota "gel", se encoge al bajar), luz especular y refracción del borde (solo Chromium).
+- `scripts/text.ts` — ayudas de texto (titular partido, rol actual, pila corta), con tests.
+
+Mejora progresiva: sin JS los diagramas se ven como listas con todos sus pasos y detalles y el trabajo destacado como secciones seguidas; sin refracción SVG (Safari/Firefox) queda el blur; sin `backdrop-filter`, superficie sólida (`@supports`); con `prefers-reduced-motion: reduce`, sin transiciones ni recorrido automático y la lente fija.

@@ -6,6 +6,8 @@
 // Todo es mejora progresiva: sin JS la barra y los controles funcionan como enlaces normales.
 
 const NS = 'http://www.w3.org/2000/svg';
+/** Igual que --t-morph en tokens.css: lo que tarda la barra en encogerse y la gota en viajar. */
+const GEL_MS = 420;
 
 export function prefersMotion(): boolean {
   try {
@@ -15,7 +17,11 @@ export function prefersMotion(): boolean {
   }
 }
 
-/** Mueve la gota bajo `target`; si hay movimiento, la estira como un gel entre posición vieja y nueva. */
+/**
+ * Mueve la gota bajo `target`; si hay movimiento, la estira como un gel entre posición vieja y nueva.
+ * Duración y curva = tokens --t-morph (420 ms) y --ease-drawer de tokens.css (desplazamiento en pantalla).
+ * Quien llama pasa animate=false en cambios iniciados por teclado: ahí la gota salta sin animación.
+ */
 export function gelMove(dropEl: HTMLElement, container: HTMLElement, target: HTMLElement, animate: boolean, motion: boolean): void {
   const cr = container.getBoundingClientRect();
   const tr = target.getBoundingClientRect();
@@ -34,7 +40,7 @@ export function gelMove(dropEl: HTMLElement, container: HTMLElement, target: HTM
         { left: `${minL + (left < oldL ? 0 : (maxR - minL) * 0.18)}px`, width: `${(maxR - minL) * 0.82}px`, transform: 'scaleY(.84)', offset: 0.42 },
         { left: `${left}px`, width: `${width}px`, transform: 'scaleY(1)' },
       ],
-      { duration: 560, easing: 'cubic-bezier(.3,.8,.25,1)' },
+      { duration: GEL_MS, easing: 'cubic-bezier(.32,.72,0,1)' },
     );
   }
 }
@@ -63,7 +69,7 @@ function initTabBar(nav: HTMLElement, motion: () => boolean): void {
   let trackUntil = 0;
   let trackRaf = 0;
   function trackNav(): void {
-    trackUntil = performance.now() + 620;
+    trackUntil = performance.now() + GEL_MS + 60;
     cancelAnimationFrame(trackRaf); // un solo bucle a la vez aunque se llame seguido
     const step = (): void => {
       if (current && navDrop) gelMove(navDrop, nav, current, false, motion());

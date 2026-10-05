@@ -23,7 +23,7 @@ const pages = [
   { key: 'about', label: ui.nav.about },
 ];
 ---
-<nav class="glass tabbar" data-lg aria-label={sections.length > 0 ? ui.nav.home : undefined}>
+<nav class="glass tabbar" data-lg aria-label={sections.length > 0 ? ui.tabBar.sections : ui.tabBar.pages}>
   <span class="drop" aria-hidden="true"></span>
   {
     sections.length > 0

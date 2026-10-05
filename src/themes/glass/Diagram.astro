@@ -2,7 +2,8 @@
 // Diagrama de pasos con lente de vidrio (tema glass). Los datos vienen del contrato (DiagramStep[]).
 // - <ol class="diagram-steps">: siempre en el DOM; es la versión sin JS y la que leen los lectores de pantalla.
 // - Dos SVG decorativos (aria-hidden): fila en escritorio y columna en móvil; el CSS muestra uno según el ancho.
-// - scripts/lens.ts lee las posiciones de los <g data-step> generados aquí y monta la lente encima.
+// - scripts/lens.ts lee las posiciones de los <g data-step> generados aquí y monta la lente encima;
+//   también hace la figura enfocable (tabindex) y la describe con la pista: sin JS no hay parada de tabulación muerta.
 import type { DiagramStep } from '../contract';
 import { layoutSteps, layoutStepsVertical, wrapLabel, type Box } from './scripts/layout';
 
@@ -58,9 +59,7 @@ const hintId = `${id}-hint`;
   id={id}
   data-diagram
   data-tour={tour ? '' : undefined}
-  tabindex="0"
   aria-labelledby={titleId}
-  aria-describedby={hintId}
 >
   <p class="diagram-title mono" id={titleId}>{title}</p>
   <div class="stage">
@@ -121,7 +120,7 @@ const hintId = `${id}-hint`;
     background: var(--surface);
     border-radius: 28px;
     overflow: hidden;
-    transition: background-color .45s var(--ease-out);
+    transition: background-color var(--t-theme) var(--ease-out);
   }
   .diagram .dg-svg { display: block; width: 100%; height: auto; touch-action: pan-y; cursor: pointer; }
   .diagram .dg-v { display: none; }
@@ -189,7 +188,7 @@ const hintId = `${id}-hint`;
   .dg .dot { fill: var(--dot); }
   .dg .edge { fill: none; stroke: var(--line); stroke-width: 1.5; }
   .dg .flow { fill: none; stroke: var(--accent); stroke-width: 2.25; stroke-linecap: round; }
-  .dg .node rect { fill: var(--node); stroke: var(--line-2); stroke-width: 1; transition: stroke .3s; }
+  .dg .node rect { fill: var(--node); stroke: var(--line-2); stroke-width: 1; transition: stroke var(--t-hover) ease; }
   .dg .node.is-on rect { stroke: var(--accent); stroke-width: 1.5; }
   .dg .lab { font-family: var(--sans); font-size: 17px; font-weight: 560; fill: var(--ink); letter-spacing: -.005em; }
   .lens-layer { pointer-events: none; }

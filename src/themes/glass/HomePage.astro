@@ -15,16 +15,17 @@ const text = profile.text[locale];
 const [headA, headB] = splitHeadline(text.headline);
 const role = currentRole(text.experience);
 const featured = featuredCases(cases);
-// orden de la barra flotante: Trabajo, Índice, Contacto (ids que usa scripts/controls.ts)
+// orden de la barra flotante: Trabajo, Índice, Contacto (ids que usa scripts/controls.ts).
+// Sin casos destacados no se renderiza #work, así que su pestaña tampoco.
 const sections = [
-  { id: 'work', label: ui.sections.work },
+  ...(featured.length > 0 ? [{ id: 'work', label: ui.sections.work }] : []),
   { id: 'index', label: ui.sections.index },
   { id: 'contact', label: ui.sections.contact },
 ];
 ---
 <Layout locale={locale} ui={ui} profile={profile} sections={sections}>
   <section class="hero wrap" aria-labelledby="name">
-    <h1 id="name">{profile.name}</h1>
+    <h1 id="name" translate="no">{profile.name}</h1>
     <div class="hero-row">
       <div class="headline">
         <p>{headA}{headB && <> <span class="soft">{headB}</span></>}</p>

@@ -5,7 +5,8 @@
 
 /* ===================== base ===================== */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; }
+/* los controles flotantes (arriba) y la barra (abajo) no deben tapar lo que recibe foco o un ancla */
+html { -webkit-text-size-adjust: 100%; scroll-padding-block: 88px 96px; }
 html.motion { scroll-behavior: smooth; }
 body {
   margin: 0;
@@ -18,16 +19,19 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
-  transition: background-color .45s var(--ease-out), color .45s var(--ease-out);
+  transition: background-color var(--t-theme) var(--ease-out), color var(--t-theme) var(--ease-out);
 }
+::selection { background: color-mix(in srgb, var(--accent) 24%, transparent); color: var(--ink); }
 @media (max-width: 720px) { body { font-size: var(--text-sm); } }
 h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
 a { color: inherit; }
 a:not([class]) { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: .18em; }
-a:not([class]):hover { text-decoration-thickness: 2px; }
+@media (hover: hover) and (pointer: fine) { a:not([class]):hover { text-decoration-thickness: 2px; } }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+/* los controles de vidrio tienen su propio brillo al presionar: sin el resaltado gris del toque en móvil */
+.glass, .glass a, .glass button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 code { font-family: var(--mono); font-size: .88em; }
 .vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .skip { position: fixed; left: 16px; top: -60px; z-index: 50; padding: 10px 16px; background: var(--ink); color: var(--bg); border-radius: 999px; text-decoration: none; font-size: 15px; }
@@ -49,7 +53,7 @@ main:focus { outline: none; }
     0 0 0 .5px var(--glass-edge),
     0 1px 2px -1px var(--glass-shadow),
     0 10px 30px -12px var(--glass-shadow);
-  transition: background-color .45s var(--ease-out), box-shadow .45s var(--ease-out), color .45s var(--ease-out);
+  transition: background-color var(--t-theme) var(--ease-out), box-shadow var(--t-theme) var(--ease-out), color var(--t-theme) var(--ease-out), transform var(--t-press) var(--ease-out);
 }
 /* Solo Chromium (clase puesta por JS): refracción real del borde con un filtro SVG. */
 .lg-refract .glass[data-lg] {
@@ -83,11 +87,12 @@ main:focus { outline: none; }
   border-radius: inherit;
   background: radial-gradient(120px 120px at var(--px, 50%) var(--py, 50%), rgba(255,255,255,.35), rgba(255,255,255,0) 70%);
   opacity: 0;
-  transition: opacity .5s var(--ease-out);
+  transition: opacity 280ms var(--ease-out);
   pointer-events: none;
   z-index: 1;
 }
-.glass.is-pressed::after { opacity: .9; transition-duration: .08s; }
+/* asimétrico: el brillo entra al instante (respuesta) y se apaga rápido al soltar */
+.glass.is-pressed::after { opacity: .9; transition-duration: 80ms; }
 .glass > * { position: relative; z-index: 3; }
 
 /* primario tintado (solo las acciones primarias llevan tinte) */
@@ -110,7 +115,7 @@ main:focus { outline: none; }
   color: var(--ink-2);
   text-decoration: none;
   padding: 8px 0;
-  transition: opacity .3s var(--ease-out);
+  transition: opacity var(--t-hover) var(--ease-out), color var(--t-hover) ease;
 }
 .scrolled .mark { opacity: 0; pointer-events: none; }
 .controls { display: flex; align-items: center; gap: 2px; padding: 4px; }
@@ -127,14 +132,16 @@ main:focus { outline: none; }
   color: var(--ink-2);
   text-decoration: none;
   text-transform: uppercase;
+  transition: color var(--t-hover) ease, transform var(--t-press) var(--ease-out);
 }
-.lang a:hover { color: var(--ink); }
+.lang a:active { transform: scale(.96); }
 .lang [aria-current="true"] { background: var(--drop); color: var(--ink); }
 .controls .sep { width: 1px; height: 18px; background: var(--rule); margin: 0 4px; }
-.theme-btn { width: 36px; height: 36px; border-radius: 999px; display: grid; place-items: center; color: var(--ink); }
+.theme-btn { width: 36px; height: 36px; border-radius: 999px; display: grid; place-items: center; color: var(--ink); transition: background-color var(--t-hover) ease, transform var(--t-press) var(--ease-out); }
+.theme-btn:active { transform: scale(.94); }
 .theme-btn svg { width: 18px; height: 18px; display: block; }
 /* icono de tres estados: claro = círculo vacío, sistema = medio disco, oscuro = disco lleno */
-.theme-btn .half { transition: opacity .3s var(--ease-out), transform .6s var(--ease-gel); transform-origin: 12px 12px; }
+.theme-btn .half { transition: opacity var(--t-hover) var(--ease-out), transform var(--t-morph) var(--ease-gel); transform-origin: 12px 12px; }
 :root[data-theme="light"] .theme-btn .half { opacity: 0; transform: rotate(-90deg); }
 :root[data-theme="system"] .theme-btn .half-l,
 :root:not([data-theme]) .theme-btn .half-l { opacity: 0; transform: rotate(90deg); }
@@ -170,9 +177,9 @@ html:not(.js) .theme-btn, html:not(.js) .controls .sep { display: none; }
   font-weight: 500;
   color: var(--ink-2);
   text-decoration: none;
-  transition: max-width .5s var(--ease-gel), padding .5s var(--ease-gel), opacity .3s var(--ease-out), color .3s;
+  transition: max-width var(--t-morph) var(--ease-gel), padding var(--t-morph) var(--ease-gel), opacity var(--t-hover) var(--ease-out), color var(--t-hover) ease, transform var(--t-press) var(--ease-out);
 }
-.tabbar a:hover { color: var(--ink); }
+.tabbar a:active { transform: scale(.97); }
 .tabbar a[aria-current="true"], .tabbar a[aria-current="page"] { color: var(--ink); }
 .tabbar .drop {
   position: absolute;
@@ -184,7 +191,7 @@ html:not(.js) .theme-btn, html:not(.js) .controls .sep { display: none; }
   border-radius: 999px;
   background: var(--drop);
   opacity: 0;
-  transition: opacity .35s var(--ease-out);
+  transition: opacity var(--t-hover) var(--ease-out);
 }
 .tabbar.has-active .drop { opacity: 1; }
 /* sin JS la gota no se puede colocar: la pestaña actual lleva su propio fondo */
@@ -224,7 +231,7 @@ html:not(.js) .tabbar a[aria-current="page"] { background: var(--drop); }
   --ink-3: var(--inv-ink-2);
   --rule: var(--inv-rule);
   padding: clamp(80px, 10vw, 136px) 0 140px;
-  transition: background-color .45s var(--ease-out), color .45s var(--ease-out);
+  transition: background-color var(--t-theme) var(--ease-out), color var(--t-theme) var(--ease-out);
 }
 .contact .kicker { color: var(--inv-ink-2); }
 .contact h2 { margin-top: 18px; font-size: clamp(32px, 4vw, 56px); font-weight: 600; letter-spacing: -.03em; line-height: 1.05; max-width: 22ch; text-wrap: balance; }
@@ -240,10 +247,11 @@ html:not(.js) .tabbar a[aria-current="page"] { background: var(--drop); }
   overflow-wrap: anywhere;
   background: linear-gradient(var(--inv-accent), var(--inv-accent)) 0 100% / 100% 2px no-repeat;
   padding-bottom: 6px;
+  transition: color var(--t-hover) ease;
 }
-.email:hover { color: var(--inv-accent); }
 .actions { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 12px; }
 .btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; font-size: 16px; font-weight: 600; text-decoration: none; }
+.btn:active { transform: scale(.97); }
 .btn .mono { font-size: var(--label); opacity: .85; }
 .contact .glass:not(.tinted) {
   --glass: color-mix(in srgb, var(--inv-ink) 10%, transparent);
@@ -253,10 +261,20 @@ html:not(.js) .tabbar a[aria-current="page"] { background: var(--drop); }
 }
 .foot { margin-top: 96px; padding-top: 24px; border-top: 1px solid var(--inv-rule); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; color: var(--inv-ink-2); }
 .foot ul { display: flex; flex-wrap: wrap; gap: 4px 20px; }
-.foot a { color: var(--inv-ink-2); text-decoration: none; }
-.foot a:hover, .foot a[aria-current="page"] { color: var(--inv-ink); text-decoration: underline; text-underline-offset: .2em; }
+.foot a { color: var(--inv-ink-2); text-decoration: none; text-underline-offset: .2em; transition: color var(--t-hover) ease; }
+.foot a[aria-current="page"] { color: var(--inv-ink); text-decoration: underline; }
 @media (max-width: 720px) {
   .btn { height: 48px; padding: 0 20px; }
+}
+
+/* ===================== hover (solo punteros finos: en táctil el :hover se queda pegado tras el toque) ===================== */
+@media (hover: hover) and (pointer: fine) {
+  .lang a:hover { color: var(--ink); }
+  .tabbar a:hover { color: var(--ink); }
+  .email:hover { color: var(--inv-accent); }
+  .foot a:hover { color: var(--inv-ink); text-decoration: underline; }
+  .theme-btn:hover { background: var(--drop); }
+  .contact .glass.btn:not(.tinted):hover { --glass: color-mix(in srgb, var(--inv-ink) 16%, transparent); }
 }
 
 /* ===================== reduced motion ===================== */

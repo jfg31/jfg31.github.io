@@ -61,6 +61,8 @@ export interface UiStrings {
   theme: { label: string; light: string; dark: string; system: string; switchTo: string };
   language: string;
   sections: { work: string; index: string; contact: string };
+  /** Nombre accesible de la barra flotante (tema glass): con anclas de la página o con enlaces entre páginas. */
+  tabBar: { sections: string; pages: string };
   skipToContent: string;
   /** Etiqueta corta de un caso destacado en el índice (tema glass). */
   featuredTag: string;
