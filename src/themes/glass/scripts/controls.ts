@@ -39,6 +39,15 @@ function gelMove(dropEl: HTMLElement, container: HTMLElement, target: HTMLElemen
   }
 }
 
+/** ¿Hay foco de teclado dentro de `el`? Sin soporte de :focus-visible, cuenta cualquier foco. */
+function hasKeyboardFocus(el: HTMLElement): boolean {
+  try {
+    return el.querySelector(':focus-visible') !== null;
+  } catch {
+    return el.contains(document.activeElement);
+  }
+}
+
 /* ---------------- barra de pestañas ---------------- */
 function initTabBar(nav: HTMLElement, motion: () => boolean): void {
   const doc = document.documentElement;
@@ -52,13 +61,28 @@ function initTabBar(nav: HTMLElement, motion: () => boolean): void {
   let current: HTMLAnchorElement | null = secLinks.length > 0 ? null : nav.querySelector<HTMLAnchorElement>('a[aria-current="page"]');
 
   let trackUntil = 0;
+  let trackRaf = 0;
   function trackNav(): void {
     trackUntil = performance.now() + 620;
+    cancelAnimationFrame(trackRaf); // un solo bucle a la vez aunque se llame seguido
     const step = (): void => {
       if (current && navDrop) gelMove(navDrop, nav, current, false, motion());
-      if (performance.now() < trackUntil) requestAnimationFrame(step);
+      trackRaf = performance.now() < trackUntil ? requestAnimationFrame(step) : 0;
     };
     step();
+  }
+
+  // Barra encogida: las pestañas ocultas (ancho 0) salen del orden de tabulación y del árbol de accesibilidad.
+  function syncHidden(): void {
+    const min = nav.classList.contains('is-min');
+    for (const a of navLinks) a.inert = min && a !== current;
+  }
+
+  function setMin(min: boolean): void {
+    if (min === nav.classList.contains('is-min')) return;
+    nav.classList.toggle('is-min', min);
+    syncHidden();
+    trackNav();
   }
 
   function placeNavDrop(animate: boolean): void {
@@ -76,7 +100,10 @@ function initTabBar(nav: HTMLElement, motion: () => boolean): void {
     secLinks.forEach((a) => a.setAttribute('aria-current', a === link ? 'true' : 'false'));
     current = link;
     placeNavDrop(true);
-    if (nav.classList.contains('is-min')) trackNav();
+    if (nav.classList.contains('is-min')) {
+      syncHidden();
+      trackNav();
+    }
   }
 
   function spy(): void {
@@ -99,11 +126,9 @@ function initTabBar(nav: HTMLElement, motion: () => boolean): void {
     const dy = y - lastY;
     doc.classList.toggle('scrolled', y > 40);
     if (Math.abs(dy) > 6) {
-      const shouldMin = dy > 0 && y > innerHeight * 0.8 && !!current;
-      if (shouldMin !== nav.classList.contains('is-min')) {
-        nav.classList.toggle('is-min', shouldMin);
-        trackNav();
-      }
+      // con foco de teclado dentro de la barra no se encoge (el foco quedaría en una pestaña oculta)
+      const shouldMin = dy > 0 && y > innerHeight * 0.8 && !!current && !hasKeyboardFocus(nav);
+      setMin(shouldMin);
       lastY = y;
     }
     spy();
@@ -133,9 +158,13 @@ function initTabBar(nav: HTMLElement, motion: () => boolean): void {
   nav.addEventListener('click', (e) => {
     if (nav.classList.contains('is-min')) {
       e.preventDefault();
-      nav.classList.remove('is-min');
-      trackNav();
+      setMin(false);
     }
+  });
+  // teclado: al recibir foco la barra se expande para que se vea la pestaña enfocada
+  // (solo foco de teclado: con el mouse, el clic ya expande y no debe navegar en el mismo gesto)
+  nav.addEventListener('focusin', () => {
+    if (hasKeyboardFocus(nav)) setMin(false);
   });
   let resizeTimer = 0;
   window.addEventListener(

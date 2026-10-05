@@ -6,20 +6,23 @@ interface Props {
 }
 
 const { ui } = Astro.props;
-// El estado inicial real lo fija el script inline del <head>; aquí se renderiza "system"
-// (el valor por defecto) y el script de abajo lo sincroniza al cargar.
+// Botón simple de ciclo (sin aria-pressed: tres modos no son un toggle de dos estados).
+// El nombre accesible dice el modo actual y la acción siguiente: "Color theme: System — switch to Light".
+// El estado real lo fija el script inline del <head>; aquí se renderiza "system" (el valor por defecto)
+// y el script de abajo lo sincroniza al cargar.
+const initialLabel = `${ui.theme.label}: ${ui.theme.system} — ${ui.theme.switchTo} ${ui.theme.light}`;
 ---
 <button
   type="button"
   class="theme-btn"
   data-theme-toggle
   data-label={ui.theme.label}
+  data-switch-to={ui.theme.switchTo}
   data-light={ui.theme.light}
   data-dark={ui.theme.dark}
   data-system={ui.theme.system}
-  aria-pressed="mixed"
-  aria-label={`${ui.theme.label}: ${ui.theme.system}`}
-  title={`${ui.theme.label}: ${ui.theme.system}`}
+  aria-label={initialLabel}
+  title={initialLabel}
 >
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5" />
@@ -30,18 +33,21 @@ const { ui } = Astro.props;
 
 <script>
   type Mode = 'light' | 'dark' | 'system';
+  // Ciclo: Light → Dark → System → Light
   const ORDER: Mode[] = ['light', 'dark', 'system'];
-  const PRESSED: Record<Mode, string> = { light: 'false', dark: 'true', system: 'mixed' };
 
   function currentMode(): Mode {
     const value = document.documentElement.dataset.theme;
     return ORDER.includes(value as Mode) ? (value as Mode) : 'system';
   }
 
+  function nextMode(mode: Mode): Mode {
+    return ORDER[(ORDER.indexOf(mode) + 1) % ORDER.length];
+  }
+
   function sync(btn: HTMLButtonElement): void {
     const mode = currentMode();
-    const label = `${btn.dataset.label}: ${btn.dataset[mode]}`;
-    btn.setAttribute('aria-pressed', PRESSED[mode]);
+    const label = `${btn.dataset.label}: ${btn.dataset[mode]} — ${btn.dataset.switchTo} ${btn.dataset[nextMode(mode)]}`;
     btn.setAttribute('aria-label', label);
     btn.title = label;
   }
@@ -49,8 +55,7 @@ const { ui } = Astro.props;
   document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((btn) => {
     sync(btn);
     btn.addEventListener('click', () => {
-      // Ciclo: Light → Dark → System → Light
-      const next = ORDER[(ORDER.indexOf(currentMode()) + 1) % ORDER.length];
+      const next = nextMode(currentMode());
       document.documentElement.dataset.theme = next;
       try {
         localStorage.setItem('theme', next);

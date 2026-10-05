@@ -58,7 +58,7 @@ export interface UiStrings {
   sitePipelineTitle: string;
   sitePipeline: DiagramStep[];
   lensHint: string;
-  theme: { label: string; light: string; dark: string; system: string };
+  theme: { label: string; light: string; dark: string; system: string; switchTo: string };
   language: string;
   sections: { work: string; index: string; contact: string };
   skipToContent: string;

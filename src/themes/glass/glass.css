@@ -189,8 +189,9 @@ html:not(.js) .theme-btn, html:not(.js) .controls .sep { display: none; }
 .tabbar.has-active .drop { opacity: 1; }
 /* sin JS la gota no se puede colocar: la pestaña actual lleva su propio fondo */
 html:not(.js) .tabbar a[aria-current="page"] { background: var(--drop); }
-.tabbar.is-min a:not([aria-current="true"]):not([aria-current="page"]) { max-width: 0; padding-inline: 0; opacity: 0; }
-.tabbar.is-min a[aria-current="true"], .tabbar.is-min a[aria-current="page"] { padding-inline: 22px; }
+/* con foco de teclado dentro, la barra se ve expandida (respaldo CSS del focusin de controls.ts; :focus-visible y no :focus-within para que el clic con mouse no la estire a mitad del gesto) */
+.tabbar.is-min:not(:has(:focus-visible)) a:not([aria-current="true"]):not([aria-current="page"]) { max-width: 0; padding-inline: 0; opacity: 0; }
+.tabbar.is-min:not(:has(:focus-visible)) a[aria-current="true"], .tabbar.is-min:not(:has(:focus-visible)) a[aria-current="page"] { padding-inline: 22px; }
 /* adaptativo: sobre la banda inversa la barra cambia de entorno */
 .tabbar.on-inverse, .controls.on-inverse {
   --glass: color-mix(in srgb, var(--inv-bg) 62%, transparent);
@@ -205,7 +206,7 @@ html:not(.js) .tabbar a[aria-current="page"] { background: var(--drop); }
 @media (max-width: 720px) {
   .tabbar a { font-size: 14px; padding: 0 13px; height: 42px; line-height: 42px; }
   .tabbar .drop { height: 42px; }
-  .tabbar.is-min a[aria-current="true"], .tabbar.is-min a[aria-current="page"] { padding-inline: 18px; }
+  .tabbar.is-min:not(:has(:focus-visible)) a[aria-current="true"], .tabbar.is-min:not(:has(:focus-visible)) a[aria-current="page"] { padding-inline: 18px; }
   .mark { display: none; }
   .topbar { justify-content: flex-end; inset: 12px 16px auto 16px; }
 }
