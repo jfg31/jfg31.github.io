@@ -13,14 +13,17 @@
     "test": "vitest run",
     "export": "node --env-file-if-exists=.env.local scripts/export.mjs",
     "lint:privacy": "node --env-file-if-exists=.env.local scripts/privacy-lint.mjs",
-    "release:check": "pnpm export && pnpm lint:privacy && pnpm test && pnpm build"
+    "check": "astro check",
+    "release:check": "pnpm export && pnpm lint:privacy && pnpm test && pnpm check && pnpm build"
   },
   "dependencies": {
     "astro": "^7.3.5",
     "marked": "^18.0.14"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "gray-matter": "^4.0.3",
+    "typescript": "^6.0.3",
     "vitest": "^5.0.3"
   }
 }
