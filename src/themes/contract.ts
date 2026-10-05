@@ -11,6 +11,8 @@ export type Status = (typeof STATUSES)[number];
 
 export interface CaseText { title: string; summary: string; problem: string; solution: string; outcome: string }
 
+export interface DiagramStep { label: string; detail: string }
+
 export interface Case {
   slug: string;
   featured: 1 | 2 | 3;
@@ -21,6 +23,7 @@ export interface Case {
   links: { demo?: string; repo?: string };
   updated: string;
   text: Record<Locale, CaseText>;
+  diagram?: Record<Locale, DiagramStep[]>;
 }
 
 export interface ProfileText { headline: string; about: string; education: string; experience: string; certifications: string; hardware: string }

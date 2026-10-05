@@ -1,5 +1,6 @@
 import matter from 'gray-matter';
 import { extractSection, extractSubsections } from './sections.mjs';
+import { readDiagram } from './diagram.mjs';
 
 export const CATEGORIES = ['automatizacion', 'infraestructura', 'producto', 'clientes', 'herramientas-ia', 'hardware'];
 export const STATUSES = ['activo', 'live', 'prototipo', 'completado'];
@@ -60,7 +61,7 @@ export function parseCase(markdown, file) {
   if (!STATUSES.includes(data.estado)) fail(file, `estado inválido: ${data.estado}`);
   if (!Array.isArray(data.stack) || data.stack.length === 0) fail(file, 'stack vacío');
   if (typeof data.periodo !== 'string' || !data.periodo.trim()) fail(file, 'periodo vacío');
-  return {
+  const result = {
     slug: data.slug,
     featured: data.destacado,
     category: data.categoria,
@@ -71,6 +72,9 @@ export function parseCase(markdown, file) {
     updated: toDateString(data.actualizado, file, 'actualizado'),
     text: readLocalized(content, CASE_SECTIONS, file),
   };
+  const diagram = readDiagram(content, file);
+  if (diagram) result.diagram = diagram;
+  return result;
 }
 
 export function parseProfile(markdown, file) {

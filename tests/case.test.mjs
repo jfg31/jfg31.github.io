@@ -101,6 +101,19 @@ describe('parseCase', () => {
   it('incluye el nombre del archivo en el error', () => {
     expect(() => parseCase(caseMd(validFront.replace('estado: activo', 'estado: x')), 'Mi caso.md')).toThrow('Mi caso.md');
   });
+
+  it('incluye diagram cuando ambos idiomas lo traen', () => {
+    const body = publicSections
+      .replace('Resultado ES', 'Resultado ES\n### Diagrama\n1. **A** — uno\n2. **B** — dos')
+      .replace('Outcome EN', 'Outcome EN\n### Diagram\n1. **A** — one\n2. **B** — two');
+    const c = parseCase(caseMd(validFront, body), 'a.md');
+    expect(c.diagram.en).toEqual([{ label: 'A', detail: 'one' }, { label: 'B', detail: 'two' }]);
+    expect(c.text.es.outcome).toBe('Resultado ES');
+  });
+
+  it('omite diagram cuando no existe', () => {
+    expect(parseCase(caseMd(validFront), 'a.md')).not.toHaveProperty('diagram');
+  });
 });
 
 const profileMd = (front) => `---\n${front}\n---\n# Perfil\n## Educación\nprivado\n
