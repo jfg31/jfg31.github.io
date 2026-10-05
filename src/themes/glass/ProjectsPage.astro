@@ -1,0 +1,30 @@
+---
+// Provisional (Task 5): renderiza los mismos datos que base. La Task 7 la convierte en la página final.
+import Layout from './Layout.astro';
+import type { ThemeProps } from '../contract';
+import { groupByCategory } from '../../lib/cases';
+import { localePath } from '../../i18n/ui';
+
+type Props = ThemeProps;
+const { locale, ui, profile, cases } = Astro.props;
+---
+<Layout locale={locale} ui={ui} profile={profile} title={ui.allProjects} subpath="projects">
+  <div class="page wrap">
+    <h1>{ui.allProjects}</h1>
+    {groupByCategory(cases).map(([category, items]) => (
+      <section>
+        <h2>{ui.categories[category]}</h2>
+        <ul class="list">
+          {items.map((item) => (
+            <li>
+              <p class="kicker">{ui.statuses[item.status]}</p>
+              <a href={localePath(locale, `projects/${item.slug}`)}>{item.text[locale].title}</a>
+              <p>{item.text[locale].summary}</p>
+              <p class="stack">{item.stack.join(' · ')}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</Layout>

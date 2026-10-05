@@ -1,0 +1,34 @@
+---
+// Provisional (Task 5): renderiza los mismos datos que base. La Task 7 la convierte en la página final.
+import Layout from './Layout.astro';
+import type { CasePageProps } from '../contract';
+import { md } from '../../lib/markdown';
+import { formatPeriod } from '../../lib/cases';
+
+type Props = CasePageProps;
+const { locale, ui, profile, item } = Astro.props;
+const text = item.text[locale];
+---
+<Layout locale={locale} ui={ui} profile={profile} title={text.title} description={text.summary} subpath={`projects/${item.slug}`}>
+  <article class="page wrap">
+    <p class="kicker">{ui.categories[item.category]} · {ui.statuses[item.status]} · {ui.period}: {formatPeriod(item.period, locale)}</p>
+    <h1>{text.title}</h1>
+    <p class="lead">{text.summary}</p>
+    <h2>{ui.problem}</h2>
+    <div class="prose" set:html={md(text.problem)} />
+    <h2>{ui.solution}</h2>
+    <div class="prose" set:html={md(text.solution)} />
+    <h2>{ui.outcome}</h2>
+    <div class="prose" set:html={md(text.outcome)} />
+    <h2>{ui.stack}</h2>
+    <p class="stack">{item.stack.join(' · ')}</p>
+    {(item.links.demo || item.links.repo) && (
+      <p class="prose">
+        {item.links.demo && <a href={item.links.demo}>{ui.demo}</a>}
+        {item.links.demo && item.links.repo && ' · '}
+        {item.links.repo && <a href={item.links.repo}>{ui.repo}</a>}
+      </p>
+    )}
+    <p class="kicker">{ui.updated}: {item.updated}</p>
+  </article>
+</Layout>

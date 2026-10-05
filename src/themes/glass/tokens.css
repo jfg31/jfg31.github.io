@@ -1,0 +1,125 @@
+/*
+ * Tema glass — tokens. Retoque rápido = cambiar estas variables.
+ * Modo: <html data-theme="light|dark|system">, fijado antes del primer paint por el
+ * script inline de Layout.astro. Sin JS el atributo queda en "system" (sigue al SO).
+ */
+:root {
+  color-scheme: light;
+  --bg: #EEEDE8;
+  --surface: #E6E4DD;
+  --node: #F8F7F3;
+  --ink: #15161A;
+  --ink-2: #4A4C52;
+  --ink-3: #5C5E64;
+  --line: rgba(21, 22, 26, .24);
+  --line-2: rgba(21, 22, 26, .30);
+  --rule: rgba(21, 22, 26, .12);
+  --dot: rgba(21, 22, 26, .17);
+  --accent: #B23A12;
+  --accent-ink: #A8360F;
+  --on-accent: #FFFFFF;
+  --accent-wash: rgba(178, 58, 18, .10);
+
+  /* vidrio — variante Regular, entorno claro */
+  --glass: rgba(250, 249, 246, .60);
+  --glass-solid: rgba(244, 243, 239, .96);
+  --glass-edge: rgba(21, 22, 26, .10);
+  --spec-a: rgba(255, 255, 255, .95);
+  --spec-b: rgba(255, 255, 255, .40);
+  --glass-shadow: rgba(36, 32, 26, .16);
+  --drop: rgba(21, 22, 26, .075);
+  --lens-tint: rgba(255, 255, 255, .10);
+  --lens-edge: rgba(255, 255, 255, .55);
+  --lens-shadow: rgba(30, 26, 20, .30);
+
+  /* banda inversa (contacto) */
+  --inv-bg: #16171A;
+  --inv-ink: #EEEDE8;
+  --inv-ink-2: #B7B5AE;
+  --inv-accent: #FF8F66;
+  --inv-on-accent: #1A0F0A;
+  --inv-rule: rgba(238, 237, 232, .14);
+
+  /* tipo y espaciado */
+  --light: 135deg;
+  --sans: "Host Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --text: 17px;
+  --text-sm: 16px;
+  --label: 13px;
+  --gut: clamp(16px, 5.6vw, 80px);
+  --max: 1440px;
+  --ease-gel: cubic-bezier(.32, 1.32, .52, 1);
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* Paleta oscura: se repite en dos selectores (preferencia explícita y "system" con SO oscuro). */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #131312;
+  --surface: #1B1B19;
+  --node: #232321;
+  --ink: #EDEBE5;
+  --ink-2: #B9B7AF;
+  --ink-3: #9A988F;
+  --line: rgba(237, 235, 229, .26);
+  --line-2: rgba(237, 235, 229, .32);
+  --rule: rgba(237, 235, 229, .12);
+  --dot: rgba(237, 235, 229, .15);
+  --accent: #FF8F66;
+  --accent-ink: #FF9C78;
+  --on-accent: #1A0F0A;
+  --accent-wash: rgba(255, 143, 102, .12);
+  --glass: rgba(42, 42, 39, .58);
+  --glass-solid: rgba(34, 34, 32, .96);
+  --glass-edge: rgba(255, 255, 255, .10);
+  --spec-a: rgba(255, 255, 255, .55);
+  --spec-b: rgba(255, 255, 255, .16);
+  --glass-shadow: rgba(0, 0, 0, .55);
+  --drop: rgba(237, 235, 229, .11);
+  --lens-tint: rgba(255, 255, 255, .035);
+  --lens-edge: rgba(255, 255, 255, .22);
+  --lens-shadow: rgba(0, 0, 0, .65);
+  --inv-bg: #E9E7E1;
+  --inv-ink: #15161A;
+  --inv-ink-2: #4A4C52;
+  --inv-accent: #B23A12;
+  --inv-on-accent: #FFFFFF;
+  --inv-rule: rgba(21, 22, 26, .14);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"],
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --bg: #131312;
+    --surface: #1B1B19;
+    --node: #232321;
+    --ink: #EDEBE5;
+    --ink-2: #B9B7AF;
+    --ink-3: #9A988F;
+    --line: rgba(237, 235, 229, .26);
+    --line-2: rgba(237, 235, 229, .32);
+    --rule: rgba(237, 235, 229, .12);
+    --dot: rgba(237, 235, 229, .15);
+    --accent: #FF8F66;
+    --accent-ink: #FF9C78;
+    --on-accent: #1A0F0A;
+    --accent-wash: rgba(255, 143, 102, .12);
+    --glass: rgba(42, 42, 39, .58);
+    --glass-solid: rgba(34, 34, 32, .96);
+    --glass-edge: rgba(255, 255, 255, .10);
+    --spec-a: rgba(255, 255, 255, .55);
+    --spec-b: rgba(255, 255, 255, .16);
+    --glass-shadow: rgba(0, 0, 0, .55);
+    --drop: rgba(237, 235, 229, .11);
+    --lens-tint: rgba(255, 255, 255, .035);
+    --lens-edge: rgba(255, 255, 255, .22);
+    --lens-shadow: rgba(0, 0, 0, .65);
+    --inv-bg: #E9E7E1;
+    --inv-ink: #15161A;
+    --inv-ink-2: #4A4C52;
+    --inv-accent: #B23A12;
+    --inv-on-accent: #FFFFFF;
+    --inv-rule: rgba(21, 22, 26, .14);
+  }
+}

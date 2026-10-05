@@ -1,0 +1,51 @@
+---
+// Provisional (Task 5): renderiza los mismos datos que base. La Task 7 la convierte en la página final.
+import Layout from './Layout.astro';
+import type { ThemeProps } from '../contract';
+import { featuredCases, groupByCategory } from '../../lib/cases';
+import { localePath } from '../../i18n/ui';
+import { md } from '../../lib/markdown';
+
+type Props = ThemeProps;
+const { locale, ui, profile, cases } = Astro.props;
+const text = profile.text[locale];
+const sections = [
+  { id: 'work', label: ui.sections.work },
+  { id: 'index', label: ui.sections.index },
+  { id: 'contact', label: ui.sections.contact },
+];
+---
+<Layout locale={locale} ui={ui} profile={profile} sections={sections}>
+  <div class="page wrap">
+    <section aria-labelledby="name">
+      <h1 id="name">{profile.name}</h1>
+      <p class="lead">{text.headline}</p>
+      <div class="prose" set:html={md(text.about)} />
+    </section>
+    <section id="work" aria-labelledby="work-h">
+      <h2 id="work-h">{ui.featured}</h2>
+      <ul class="list">
+        {featuredCases(cases).map((item) => (
+          <li>
+            <p class="kicker">{ui.categories[item.category]} · {ui.statuses[item.status]}</p>
+            <a href={localePath(locale, `projects/${item.slug}`)}>{item.text[locale].title}</a>
+            <p>{item.text[locale].summary}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+    <section id="index" aria-labelledby="index-h">
+      <h2 id="index-h">{ui.allProjects}</h2>
+      {groupByCategory(cases).map(([category, items]) => (
+        <>
+          <h3>{ui.categories[category]}</h3>
+          <ul class="list">
+            {items.map((item) => (
+              <li><a href={localePath(locale, `projects/${item.slug}`)}>{item.text[locale].title}</a></li>
+            ))}
+          </ul>
+        </>
+      ))}
+    </section>
+  </div>
+</Layout>

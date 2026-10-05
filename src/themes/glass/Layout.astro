@@ -1,0 +1,116 @@
+---
+import './tokens.css';
+import './glass.css';
+import type { Locale, Profile, UiStrings } from '../contract';
+import { localePath, otherLocale } from '../../i18n/ui';
+import ThemeToggle from './ThemeToggle.astro';
+import TabBar, { type Section } from './TabBar.astro';
+
+interface Props {
+  locale: Locale;
+  ui: UiStrings;
+  profile: Profile;
+  title?: string;
+  description?: string;
+  subpath?: string;
+  /** Secciones de la página para la barra flotante (anclas #id). Sin ellas, la barra navega entre páginas. */
+  sections?: Section[];
+}
+
+const { locale, ui, profile, title, description, subpath = '', sections } = Astro.props;
+const alt = otherLocale(locale);
+const fullTitle = title ? `${title} · ${profile.name}` : ui.siteTitle;
+const page = subpath.split('/')[0] ?? '';
+const siteHost = Astro.site?.host ?? profile.name;
+const year = profile.updated.slice(0, 4);
+const pipeline = ui.sitePipeline.map((s) => s.label).join(' → ');
+const pages = [
+  { key: '', label: ui.nav.home },
+  { key: 'projects', label: ui.nav.projects },
+  { key: 'about', label: ui.nav.about },
+];
+---
+<!doctype html>
+<html lang={locale} data-theme="system">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Anti-FOUC: fija el tema y las clases de capacidad antes del primer paint.
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        var t = 'system';
+        try {
+          var s = localStorage.getItem('theme');
+          if (s === 'light' || s === 'dark' || s === 'system') t = s;
+        } catch (e) {}
+        d.dataset.theme = t;
+        try {
+          if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('motion');
+        } catch (e) {}
+      })();
+    </script>
+    <meta name="color-scheme" content="light dark" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description ?? profile.text[locale].headline} />
+    <link rel="alternate" hreflang={locale} href={localePath(locale, subpath)} />
+    <link rel="alternate" hreflang={alt} href={localePath(alt, subpath)} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+  </head>
+  <body>
+    <a class="skip" href="#main">{ui.skipToContent}</a>
+
+    <!-- filtros de refracción de los controles flotantes (los genera scripts/controls.ts, solo Chromium) -->
+    <svg id="lg-defs" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs></defs></svg>
+
+    <header class="topbar">
+      <a class="mark" href={localePath(locale)}>{siteHost}</a>
+      <div class="glass controls" data-lg>
+        <div class="lang" role="group" aria-label={ui.language}>
+          <span aria-current="true" lang={locale}>{locale}</span>
+          <a href={localePath(alt, subpath)} hreflang={alt} lang={alt} aria-label={ui.switchLanguage} title={ui.switchLanguage}>{alt}</a>
+        </div>
+        <span class="sep" aria-hidden="true"></span>
+        <ThemeToggle ui={ui} />
+      </div>
+    </header>
+
+    <TabBar locale={locale} ui={ui} subpath={subpath} sections={sections} />
+
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+
+    <footer id="contact" class="contact" aria-labelledby="contact-h">
+      <div class="wrap">
+        <p class="kicker">{ui.contact}</p>
+        <h2 id="contact-h">{profile.text[locale].headline}</h2>
+        <a class="email" href={`mailto:${profile.email}`}>{profile.email}</a>
+        <div class="actions">
+          <a class="glass btn" href={`https://github.com/${profile.github}`}>GitHub <span class="mono">{profile.github}</span></a>
+          {profile.linkedin && <a class="glass btn" href={profile.linkedin}>LinkedIn</a>}
+        </div>
+        <div class="foot mono">
+          <span>{ui.sitePipelineTitle}: {pipeline}</span>
+          <ul>
+            {pages.map((p) => (
+              <li><a href={localePath(locale, p.key)} aria-current={p.key === page ? 'page' : undefined}>{p.label}</a></li>
+            ))}
+          </ul>
+          <span>© {year} {profile.name}</span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      import { initControls } from './scripts/controls';
+      initControls();
+    </script>
+  </body>
+</html>

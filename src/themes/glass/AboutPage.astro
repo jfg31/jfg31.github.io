@@ -1,0 +1,29 @@
+---
+// Provisional (Task 5): renderiza los mismos datos que base. La Task 7 la convierte en la página final.
+import Layout from './Layout.astro';
+import type { ThemeProps } from '../contract';
+import { md } from '../../lib/markdown';
+
+type Props = ThemeProps;
+const { locale, ui, profile } = Astro.props;
+const text = profile.text[locale];
+const sections = [
+  [ui.profileSections.about, text.about],
+  [ui.profileSections.experience, text.experience],
+  [ui.profileSections.education, text.education],
+  [ui.profileSections.certifications, text.certifications],
+  [ui.profileSections.hardware, text.hardware],
+] as const;
+---
+<Layout locale={locale} ui={ui} profile={profile} title={ui.nav.about} subpath="about">
+  <div class="page wrap">
+    <h1>{profile.name}</h1>
+    <p class="lead">{text.headline}</p>
+    {sections.map(([heading, body]) => (
+      <section>
+        <h2>{heading}</h2>
+        <div class="prose" set:html={md(body)} />
+      </section>
+    ))}
+  </div>
+</Layout>

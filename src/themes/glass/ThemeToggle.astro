@@ -1,0 +1,63 @@
+---
+import type { UiStrings } from '../contract';
+
+interface Props {
+  ui: UiStrings;
+}
+
+const { ui } = Astro.props;
+// El estado inicial real lo fija el script inline del <head>; aquí se renderiza "system"
+// (el valor por defecto) y el script de abajo lo sincroniza al cargar.
+---
+<button
+  type="button"
+  class="theme-btn"
+  data-theme-toggle
+  data-label={ui.theme.label}
+  data-light={ui.theme.light}
+  data-dark={ui.theme.dark}
+  data-system={ui.theme.system}
+  aria-pressed="mixed"
+  aria-label={`${ui.theme.label}: ${ui.theme.system}`}
+  title={`${ui.theme.label}: ${ui.theme.system}`}
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5" />
+    <path class="half half-r" d="M12 3.75a8.25 8.25 0 0 1 0 16.5z" fill="currentColor" />
+    <path class="half half-l" d="M12 3.75a8.25 8.25 0 0 0 0 16.5z" fill="currentColor" />
+  </svg>
+</button>
+
+<script>
+  type Mode = 'light' | 'dark' | 'system';
+  const ORDER: Mode[] = ['light', 'dark', 'system'];
+  const PRESSED: Record<Mode, string> = { light: 'false', dark: 'true', system: 'mixed' };
+
+  function currentMode(): Mode {
+    const value = document.documentElement.dataset.theme;
+    return ORDER.includes(value as Mode) ? (value as Mode) : 'system';
+  }
+
+  function sync(btn: HTMLButtonElement): void {
+    const mode = currentMode();
+    const label = `${btn.dataset.label}: ${btn.dataset[mode]}`;
+    btn.setAttribute('aria-pressed', PRESSED[mode]);
+    btn.setAttribute('aria-label', label);
+    btn.title = label;
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((btn) => {
+    sync(btn);
+    btn.addEventListener('click', () => {
+      // Ciclo: Light → Dark → System → Light
+      const next = ORDER[(ORDER.indexOf(currentMode()) + 1) % ORDER.length];
+      document.documentElement.dataset.theme = next;
+      try {
+        localStorage.setItem('theme', next);
+      } catch {
+        // almacenamiento bloqueado (modo privado, cookies desactivadas): el cambio vale solo para esta página
+      }
+      sync(btn);
+    });
+  });
+</script>

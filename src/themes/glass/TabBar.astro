@@ -1,0 +1,41 @@
+---
+import type { Locale, UiStrings } from '../contract';
+import { localePath } from '../../i18n/ui';
+
+export interface Section {
+  id: string;
+  label: string;
+}
+
+interface Props {
+  locale: Locale;
+  ui: UiStrings;
+  subpath?: string;
+  /** Secciones de la página actual (anclas #id). Sin secciones, la barra navega entre páginas. */
+  sections?: Section[];
+}
+
+const { locale, ui, subpath = '', sections = [] } = Astro.props;
+const page = subpath.split('/')[0] ?? '';
+const pages = [
+  { key: '', label: ui.nav.home },
+  { key: 'projects', label: ui.nav.projects },
+  { key: 'about', label: ui.nav.about },
+];
+---
+<nav class="glass tabbar" data-lg aria-label={sections.length > 0 ? ui.nav.home : undefined}>
+  <span class="drop" aria-hidden="true"></span>
+  {
+    sections.length > 0
+      ? sections.map((s) => (
+          <a href={`#${s.id}`} data-sec={s.id} aria-current="false">
+            {s.label}
+          </a>
+        ))
+      : pages.map((p) => (
+          <a href={localePath(locale, p.key)} aria-current={p.key === page ? 'page' : undefined}>
+            {p.label}
+          </a>
+        ))
+  }
+</nav>
