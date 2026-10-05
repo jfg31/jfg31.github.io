@@ -259,26 +259,6 @@ html:not(.js) .tabbar a[aria-current="page"] { background: var(--drop); }
   .btn { height: 48px; padding: 0 20px; }
 }
 
-/* ===================== provisional pages (Task 7 lo reemplaza con sections.css) ===================== */
-.page { padding-top: clamp(96px, 13vh, 128px); }
-.page h1 { font-size: clamp(40px, 6vw, 88px); line-height: .95; font-weight: 600; letter-spacing: -.04em; }
-.page h2 { margin-top: 56px; font-size: clamp(26px, 2.6vw, 36px); line-height: 1.1; font-weight: 600; letter-spacing: -.022em; }
-.page h3 { margin-top: 28px; font-size: 20px; font-weight: 600; letter-spacing: -.012em; }
-.page .lead { margin-top: 20px; max-width: 40ch; font-size: clamp(20px, 2vw, 28px); line-height: 1.25; color: var(--ink-2); text-wrap: balance; }
-.page .prose { margin-top: 16px; max-width: 66ch; color: var(--ink-2); }
-.page .prose p + p, .page .prose ul, .page .prose ol { margin-top: 12px; }
-.page .prose ul { list-style: disc; padding-left: 1.2em; }
-.page .prose ol { list-style: decimal; padding-left: 1.2em; }
-.page .prose strong { color: var(--ink); font-weight: 600; }
-.page .list { margin-top: 20px; border-top: 1px solid var(--rule); }
-.page .list li { padding: 18px 0; border-bottom: 1px solid var(--rule); }
-.page .list a { font-size: 20px; font-weight: 600; text-decoration: none; }
-.page .list a:hover { text-decoration: underline; text-underline-offset: .18em; }
-.page .list p { margin-top: 4px; color: var(--ink-2); }
-.page .kicker + h1 { margin-top: 14px; }
-.page .prose + .kicker, .page .stack + .kicker { margin-top: 40px; }
-.page .stack { margin-top: 12px; font-family: var(--mono); font-size: var(--label); color: var(--ink-3); line-height: 1.7; }
-
 /* ===================== reduced motion ===================== */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; scroll-behavior: auto !important; }

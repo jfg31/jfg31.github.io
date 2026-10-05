@@ -7,7 +7,7 @@
 
 const NS = 'http://www.w3.org/2000/svg';
 
-function prefersMotion(): boolean {
+export function prefersMotion(): boolean {
   try {
     return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   } catch {
@@ -16,7 +16,7 @@ function prefersMotion(): boolean {
 }
 
 /** Mueve la gota bajo `target`; si hay movimiento, la estira como un gel entre posición vieja y nueva. */
-function gelMove(dropEl: HTMLElement, container: HTMLElement, target: HTMLElement, animate: boolean, motion: boolean): void {
+export function gelMove(dropEl: HTMLElement, container: HTMLElement, target: HTMLElement, animate: boolean, motion: boolean): void {
   const cr = container.getBoundingClientRect();
   const tr = target.getBoundingClientRect();
   const left = tr.left - cr.left;

@@ -39,6 +39,9 @@ export const ui: Record<Locale, UiStrings> = {
     language: 'Language',
     sections: { work: 'Work', index: 'Index', contact: 'Contact' },
     skipToContent: 'Skip to content',
+    featuredTag: 'Featured',
+    readCase: 'Read the full case',
+    caseDiagramTitle: 'How it works',
   },
   es: {
     siteTitle: 'Jose Flores — Ingeniero de Automatización e IA',
@@ -78,6 +81,9 @@ export const ui: Record<Locale, UiStrings> = {
     language: 'Idioma',
     sections: { work: 'Trabajo', index: 'Índice', contact: 'Contacto' },
     skipToContent: 'Saltar al contenido',
+    featuredTag: 'Destacado',
+    readCase: 'Leer el caso completo',
+    caseDiagramTitle: 'Cómo funciona',
   },
 };
 

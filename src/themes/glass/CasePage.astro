@@ -1,6 +1,9 @@
 ---
-// Provisional (Task 5): renderiza los mismos datos que base. La Task 7 la convierte en la página final.
+// Página de caso, estilo "case file" de E-liquid-glass (~575–597 CSS, ~887–934 HTML).
+// Con diagrama: figura fija a la izquierda y Problema/Solución a la derecha.
+// Sin diagrama: filas etiqueta | texto a lo ancho (sin hueco donde iría la figura).
 import Layout from './Layout.astro';
+import Diagram from './Diagram.astro';
 import type { CasePageProps } from '../contract';
 import { md } from '../../lib/markdown';
 import { formatPeriod } from '../../lib/cases';
@@ -8,27 +11,54 @@ import { formatPeriod } from '../../lib/cases';
 type Props = CasePageProps;
 const { locale, ui, profile, item } = Astro.props;
 const text = item.text[locale];
+const steps = item.diagram?.[locale];
 ---
 <Layout locale={locale} ui={ui} profile={profile} title={text.title} description={text.summary} subpath={`projects/${item.slug}`}>
-  <article class="page wrap">
-    <p class="kicker">{ui.categories[item.category]} · {ui.statuses[item.status]} · {ui.period}: {formatPeriod(item.period, locale)}</p>
-    <h1>{text.title}</h1>
-    <p class="lead">{text.summary}</p>
-    <h2>{ui.problem}</h2>
-    <div class="prose" set:html={md(text.problem)} />
-    <h2>{ui.solution}</h2>
-    <div class="prose" set:html={md(text.solution)} />
-    <h2>{ui.outcome}</h2>
-    <div class="prose" set:html={md(text.outcome)} />
-    <h2>{ui.stack}</h2>
-    <p class="stack">{item.stack.join(' · ')}</p>
-    {(item.links.demo || item.links.repo) && (
-      <p class="prose">
-        {item.links.demo && <a href={item.links.demo}>{ui.demo}</a>}
-        {item.links.demo && item.links.repo && ' · '}
-        {item.links.repo && <a href={item.links.repo}>{ui.repo}</a>}
+  <article class="wrap" aria-labelledby="case-h">
+    <header class="case-top">
+      <p class="kicker">
+        {ui.categories[item.category]} · <span class={`status s-${item.status}`}>{ui.statuses[item.status]}</span> · {ui.period}: {formatPeriod(item.period, locale)}
       </p>
+      <h1 id="case-h">{text.title}</h1>
+      <p class="summary">{text.summary}</p>
+      <p class="stack"><span class="vh">{ui.stack}: </span>{item.stack.join(' · ')}</p>
+    </header>
+
+    {steps ? (
+      <div class="case-split">
+        <div class="case-figure">
+          <Diagram steps={steps} title={ui.caseDiagramTitle} hint={ui.lensHint} id={`dg-${item.slug}`} />
+        </div>
+        <div class="case-text">
+          <h2 class="label-h">{ui.problem}</h2>
+          <div class="prose" set:html={md(text.problem)} />
+          <h2 class="label-h">{ui.solution}</h2>
+          <div class="prose" set:html={md(text.solution)} />
+        </div>
+      </div>
+    ) : (
+      <div class="case-rows">
+        <section class="facts-row" aria-labelledby="problem-h">
+          <h2 class="label-h" id="problem-h">{ui.problem}</h2>
+          <div class="prose" set:html={md(text.problem)} />
+        </section>
+        <section class="facts-row" aria-labelledby="solution-h">
+          <h2 class="label-h" id="solution-h">{ui.solution}</h2>
+          <div class="prose" set:html={md(text.solution)} />
+        </section>
+      </div>
     )}
-    <p class="kicker">{ui.updated}: {item.updated}</p>
+
+    <section class="case-out" aria-labelledby="outcome-h">
+      <h2 class="label-h" id="outcome-h">{ui.outcome}</h2>
+      <div class="prose lead" set:html={md(text.outcome)} />
+      {(item.links.demo || item.links.repo) && (
+        <p class="case-links">
+          {item.links.demo && <a href={item.links.demo}>{ui.demo}</a>}
+          {item.links.repo && <a href={item.links.repo}>{ui.repo}</a>}
+        </p>
+      )}
+      <p class="case-meta mono">{ui.updated}: {item.updated}</p>
+    </section>
   </article>
 </Layout>

@@ -1,0 +1,48 @@
+---
+// Índice tipográfico de todos los casos, agrupados por categoría (portado de E-liquid-glass "index").
+// Cada fila enlaza a la página del caso: es lo que verifica el contrato en /{locale}/projects/.
+import type { Case, Locale, UiStrings } from '../contract';
+import { groupByCategory, formatPeriod } from '../../lib/cases';
+import { localePath } from '../../i18n/ui';
+import { shortStack } from './scripts/text';
+
+interface Props {
+  locale: Locale;
+  ui: UiStrings;
+  cases: Case[];
+  /** Nivel del encabezado de cada categoría; el título de cada caso va un nivel por debajo. */
+  level?: 2 | 3;
+}
+
+const { locale, ui, cases, level = 3 } = Astro.props;
+const GroupH = (level === 2 ? 'h2' : 'h3') as 'h2' | 'h3';
+const RowH = (level === 2 ? 'h3' : 'h4') as 'h3' | 'h4';
+---
+<div class="groups">
+  {groupByCategory(cases).map(([category, items]) => (
+    <section class="group" aria-labelledby={`cat-${category}`}>
+      <GroupH class="group-h" id={`cat-${category}`}>
+        {ui.categories[category]}{' '}<span aria-hidden="true">· {items.length}</span>
+      </GroupH>
+      <ol>
+        {items.map((item) => {
+          const text = item.text[locale];
+          return (
+            <li class="row">
+              <div>
+                <RowH class="row-h"><a href={localePath(locale, `projects/${item.slug}`)}>{text.title}</a></RowH>
+                <p>{text.summary}</p>
+                <p class="stk">{shortStack(item.stack)}</p>
+              </div>
+              <div class="meta">
+                <span class={`status s-${item.status}`}>{ui.statuses[item.status]}</span>
+                <span>{formatPeriod(item.period, locale)}</span>
+                {item.featured === 1 && <span class="tag-feat">{ui.featuredTag}</span>}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  ))}
+</div>

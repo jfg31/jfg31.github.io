@@ -1,0 +1,165 @@
+---
+// Trabajo destacado: control segmentado de vidrio (tablist) + un panel por caso (portado de E-liquid-glass "selected work").
+// Sin JS no hay pestañas: los paneles se ven todos seguidos. Con JS: flechas, Inicio/Fin, aria-selected y tabindex móvil.
+import type { Case, Locale, UiStrings } from '../contract';
+import { formatPeriod } from '../../lib/cases';
+import { localePath } from '../../i18n/ui';
+import { md } from '../../lib/markdown';
+import Diagram from './Diagram.astro';
+import { pad2, shortTitle } from './scripts/text';
+
+interface Props {
+  locale: Locale;
+  ui: UiStrings;
+  /** Casos destacados, ya ordenados. */
+  items: Case[];
+  /** Total de casos (para el contador del kicker). */
+  total: number;
+}
+
+const { locale, ui, items, total } = Astro.props;
+---
+<section id="work" class="wrap sec" aria-labelledby="work-h" data-worktabs>
+  <div class="sec-head">
+    <div>
+      <p class="kicker">{ui.sections.work} · {pad2(items.length)} / {pad2(total)}</p>
+      <h2 id="work-h">{ui.featured}</h2>
+    </div>
+    <div class="glass seg" role="tablist" aria-label={ui.featured} data-lg>
+      <span class="drop" aria-hidden="true"></span>
+      {items.map((item, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${item.slug}`}
+          aria-controls={`panel-${item.slug}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? undefined : -1}
+        >
+          <span class="n" aria-hidden="true">{pad2(i + 1)}</span>
+          <span class="l">{shortTitle(item.text[locale].title)}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="panels">
+    {items.map((item) => {
+      const text = item.text[locale];
+      const steps = item.diagram?.[locale];
+      return (
+        <article
+          class:list={['panel', { 'no-figure': !steps }]}
+          id={`panel-${item.slug}`}
+          role="tabpanel"
+          aria-labelledby={`tab-${item.slug}`}
+        >
+          <div class="panel-text">
+            <p class="kicker">
+              {ui.categories[item.category]} · <span class={`status s-${item.status}`}>{ui.statuses[item.status]}</span> · {formatPeriod(item.period, locale)}
+            </p>
+            <h3>{text.title}</h3>
+            <p class="summary">{text.summary}</p>
+            <dl class="facts">
+              <div>
+                <dt>{ui.outcome}</dt>
+                <dd class="prose" set:html={md(text.outcome)} />
+              </div>
+              <div>
+                <dt>{ui.stack}</dt>
+                <dd class="stack">{item.stack.join(' · ')}</dd>
+              </div>
+            </dl>
+            <p class="more">
+              <a href={localePath(locale, `projects/${item.slug}`)}>{ui.readCase}<span class="vh">: {text.title}</span></a>
+              {item.links.demo && <a href={item.links.demo}>{ui.demo}</a>}
+              {item.links.repo && <a href={item.links.repo}>{ui.repo}</a>}
+            </p>
+          </div>
+          {steps && (
+            <div class="panel-figure">
+              <Diagram steps={steps} title={ui.caseDiagramTitle} hint={ui.lensHint} id={`dg-${item.slug}`} />
+            </div>
+          )}
+        </article>
+      );
+    })}
+  </div>
+</section>
+
+<script>
+  import { gelMove, prefersMotion } from './scripts/controls';
+
+  function initWorkTabs(root: HTMLElement): void {
+    const list = root.querySelector<HTMLElement>('[role="tablist"]');
+    const head = root.querySelector<HTMLElement>('.sec-head');
+    if (!list || !head) return;
+    const drop = list.querySelector<HTMLElement>('.drop');
+    const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    if (tabs.length === 0) return;
+    const panelOf = (t: HTMLButtonElement): HTMLElement | null => document.getElementById(t.getAttribute('aria-controls') ?? '');
+    let current = tabs[0];
+
+    function placeDrop(animate: boolean): void {
+      if (drop) gelMove(drop, list as HTMLElement, current, animate, prefersMotion());
+    }
+
+    function select(tab: HTMLButtonElement, focus: boolean): void {
+      current = tab;
+      for (const t of tabs) {
+        const on = t === tab;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        if (on) t.removeAttribute('tabindex');
+        else t.setAttribute('tabindex', '-1');
+        const p = panelOf(t);
+        if (p) p.hidden = !on;
+      }
+      if (focus) tab.focus();
+      placeDrop(true);
+    }
+
+    // ¿Caben todas las etiquetas? Si no, modo compacto (solo la activa lleva texto). Se mide sin transiciones.
+    function fit(): void {
+      list!.classList.add('no-anim');
+      list!.classList.remove('is-compact');
+      const fits = list!.scrollWidth <= head!.clientWidth + 1;
+      list!.classList.toggle('is-compact', !fits);
+      void list!.offsetWidth;
+      list!.classList.remove('no-anim');
+      placeDrop(false);
+    }
+
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t, false));
+      t.addEventListener('keydown', (e) => {
+        let j: number | null = null;
+        if (e.key === 'ArrowRight') j = (i + 1) % tabs.length;
+        else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+        else if (e.key === 'Home') j = 0;
+        else if (e.key === 'End') j = tabs.length - 1;
+        if (j === null) return;
+        e.preventDefault();
+        select(tabs[j], true);
+      });
+    });
+
+    // estado inicial: solo el primer panel (sin JS se ven todos)
+    for (const t of tabs.slice(1)) {
+      const p = panelOf(t);
+      if (p) p.hidden = true;
+    }
+    root.classList.add('is-ready');
+    fit();
+    let timer = 0;
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(() => {
+        clearTimeout(timer);
+        timer = window.setTimeout(fit, 80);
+      }).observe(head);
+    }
+    // el ancho de las etiquetas cambia mientras cargan las fuentes
+    document.fonts?.ready.then(fit).catch(() => {});
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-worktabs]').forEach(initWorkTabs);
+</script>

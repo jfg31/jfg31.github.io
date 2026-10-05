@@ -62,6 +62,12 @@ export interface UiStrings {
   language: string;
   sections: { work: string; index: string; contact: string };
   skipToContent: string;
+  /** Etiqueta corta de un caso destacado en el índice (tema glass). */
+  featuredTag: string;
+  /** Enlace de un panel de trabajo destacado a su página de caso (tema glass). */
+  readCase: string;
+  /** Título del diagrama de un caso (tema glass). */
+  caseDiagramTitle: string;
 }
 
 export interface ThemeProps {

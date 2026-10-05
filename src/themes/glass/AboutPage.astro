@@ -1,29 +1,39 @@
 ---
-// Provisional (Task 5): renderiza los mismos datos que base. La Task 7 la convierte en la página final.
+// Sobre mí: el mismo lenguaje tipográfico del hero y del caso (titular partido, filas etiqueta | texto). Sin vidrio extra.
 import Layout from './Layout.astro';
 import type { ThemeProps } from '../contract';
 import { md } from '../../lib/markdown';
+import { currentRole, splitHeadline } from './scripts/text';
 
 type Props = ThemeProps;
 const { locale, ui, profile } = Astro.props;
 const text = profile.text[locale];
+const [headA, headB] = splitHeadline(text.headline);
+const role = currentRole(text.experience);
 const sections = [
-  [ui.profileSections.about, text.about],
-  [ui.profileSections.experience, text.experience],
-  [ui.profileSections.education, text.education],
-  [ui.profileSections.certifications, text.certifications],
-  [ui.profileSections.hardware, text.hardware],
+  ['about', ui.profileSections.about, text.about],
+  ['experience', ui.profileSections.experience, text.experience],
+  ['education', ui.profileSections.education, text.education],
+  ['certifications', ui.profileSections.certifications, text.certifications],
+  ['hardware', ui.profileSections.hardware, text.hardware],
 ] as const;
 ---
 <Layout locale={locale} ui={ui} profile={profile} title={ui.nav.about} subpath="about">
-  <div class="page wrap">
-    <h1>{profile.name}</h1>
-    <p class="lead">{text.headline}</p>
-    {sections.map(([heading, body]) => (
-      <section>
-        <h2>{heading}</h2>
-        <div class="prose" set:html={md(body)} />
-      </section>
-    ))}
+  <div class="wrap">
+    <header class="about-top">
+      <h1>{profile.name}</h1>
+      <div class="headline">
+        <p>{headA}{headB && <> <span class="soft">{headB}</span></>}</p>
+        {role && <p class="hero-meta mono">{role}</p>}
+      </div>
+    </header>
+    <div class="about-body">
+      {sections.filter(([, , body]) => body.trim()).map(([key, heading, body]) => (
+        <section class="facts-row" aria-labelledby={`${key}-h`}>
+          <h2 class="label-h" id={`${key}-h`}>{heading}</h2>
+          <div class="prose" set:html={md(body)} />
+        </section>
+      ))}
+    </div>
   </div>
 </Layout>
