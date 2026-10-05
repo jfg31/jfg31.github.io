@@ -36,5 +36,51 @@
       "solution": "I repurposed an old laptop as a dedicated Linux server and split roles across three machines: a GPU workstation for local language models, a development VM, and the services server. Code for my projects is written in the VM, pushed to Git, then deployed on the server.\n\n```\n          [Internet]\n              ▲  outbound tunnel, no port forwarding\n              │\n  [Home router] ── DNS via DHCP → services server (fallback: public DNS)\n      │\n      ├─ GPU workstation    192.0.2.10   local LLMs (Ollama)\n      │    └─ Dev VM            192.0.2.20   my project code\n      │\n      └─ Services server    192.0.2.30\n           ├─ Reverse proxy :80/:443   (single web entry point)\n           │    └─ shared Docker network ─ n8n, Actual Budget,\n           │       Portainer, LibreOffice, Gotenberg (PDF API)\n           ├─ Pi-hole :53 (network DNS)\n           └─ cloudflared (tunnel to the internet)\n```\n\n- **Nginx Proxy Manager** as the single entry point plus a shared Docker network: a new service is one more record, not another port fight.\n- **Pi-hole** as DNS for the whole network, with a private zone and a self-signed wildcard certificate.\n- **Cloudflare Tunnel** (outbound only) just for the webhooks of my automation workflows; everything else is reachable from the local network only. A systemd hook updates the webhook and recreates n8n whenever the tunnel's URL changes.\n- **n8n** (my automation workflows) migrated off the VM, alongside Actual Budget, Portainer, **Gotenberg** (document-to-PDF conversion over an API, with a PowerShell wrapper) and browser-based LibreOffice.\n- **Firewall** with ufw, a security audit of the server and the router, and unneeded features switched off.",
       "outcome": "A server in use since August 2026 that recovered from two home power outages without losing data and, after a reboot, brings its containers and webhooks back on its own. New services go in with one compose file and one record, with no port conflicts.\n\nThe incidents became documentation:\n- **It suspended when the lid closed.** The desktop power manager ignored systemd's setting, so I masked the sleep targets; weeks later I closed a second gap that only appeared on AC power.\n- **Power outage, broken boot, a disk with pending sectors.** I took a full rescue backup, reinstalled the bootloader, monitored SMART, and spotted a cold-boot pattern; a UPS is the next step.\n- **SSH broken on Windows.** The SSH daemon wouldn't start because of host-key permissions; I rebuilt the ACLs and, along the way, rewrote a workflow that ran Windows commands inside a Linux container.\n- **An archived HTTP bridge.** I built a token-protected agent with a command allowlist so n8n could reach the VM, then archived it when I hit an n8n restriction and chose to simplify; I moved the flows to where the resources live. The lesson: sometimes the fix is to move the work, not add a layer.\n- **A \"private\" domain that was real.** The suffix I used already existed on the internet; I diagnosed it, switched, and now verify any suffix before adopting it.\n\nNext up: automated recurring backups — until they run, no client services go on this server."
     }
+  },
+  "diagram": {
+    "es": [
+      {
+        "label": "Internet",
+        "detail": "Solo salida: un túnel saliente, sin abrir ningún puerto en el router."
+      },
+      {
+        "label": "Cloudflare Tunnel",
+        "detail": "Solo para webhooks; un hook de systemd actualiza el webhook cuando cambia la URL del túnel."
+      },
+      {
+        "label": "DNS con Pi-hole",
+        "detail": "DNS de toda la red, con zona privada propia y certificado wildcard autofirmado."
+      },
+      {
+        "label": "Reverse proxy",
+        "detail": "Nginx Proxy Manager como única entrada web: un servicio nuevo es un registro más."
+      },
+      {
+        "label": "Contenedores",
+        "detail": "n8n, Actual Budget, Portainer, LibreOffice y Gotenberg en una red Docker compartida."
+      }
+    ],
+    "en": [
+      {
+        "label": "Internet",
+        "detail": "Outbound only: a tunnel going out, with no ports opened on the router."
+      },
+      {
+        "label": "Cloudflare Tunnel",
+        "detail": "Only for webhooks; a systemd hook updates the webhook whenever the tunnel URL changes."
+      },
+      {
+        "label": "DNS with Pi-hole",
+        "detail": "Network-wide DNS, with a private zone and a self-signed wildcard certificate."
+      },
+      {
+        "label": "Reverse proxy",
+        "detail": "Nginx Proxy Manager as the single web entry point: a new service is one more record."
+      },
+      {
+        "label": "Containers",
+        "detail": "n8n, Actual Budget, Portainer, LibreOffice and Gotenberg on a shared Docker network."
+      }
+    ]
   }
 }

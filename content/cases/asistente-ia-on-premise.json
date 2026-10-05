@@ -34,5 +34,43 @@
       "solution": "I designed and built a retrieval-augmented generation (RAG) assistant that runs on local hardware, using local language models served with Ollama and no cloud AI.\n\n- Indexes PDF, Word, PowerPoint, Excel, text and HTML files, with OCR for scanned documents.\n- Hybrid search: semantic (multilingual embeddings) plus keyword matching, so it finds both meaning and exact terms in technical documents.\n- Answers in Spanish or English with streaming, conversation memory and links to the source documents.\n- Queries code change history by module, file, revision or date range, with a side-by-side diff viewer.\n- Analyzes PDF reports: the model writes data-analysis code that runs in a restricted sandbox.\n\nThe architecture keeps application logic apart from the model service, which is exposed with access control.",
       "outcome": "The assistant is in production and in internal use. It covers seven document formats and four code repositories, with no data sent to external services and no per-query cost beyond the local hardware."
     }
+  },
+  "diagram": {
+    "es": [
+      {
+        "label": "Documentos",
+        "detail": "PDF, Word, PowerPoint, Excel, texto y HTML, con OCR para los documentos escaneados."
+      },
+      {
+        "label": "Búsqueda híbrida",
+        "detail": "Embeddings multilingües más palabras clave: encuentra el sentido y el término exacto."
+      },
+      {
+        "label": "Modelo local",
+        "detail": "Modelo de lenguaje servido con Ollama en hardware local, sin IA en la nube."
+      },
+      {
+        "label": "Respuesta",
+        "detail": "En español o inglés, con streaming y enlaces a los documentos fuente."
+      }
+    ],
+    "en": [
+      {
+        "label": "Documents",
+        "detail": "PDF, Word, PowerPoint, Excel, text and HTML files, with OCR for scanned documents."
+      },
+      {
+        "label": "Hybrid search",
+        "detail": "Multilingual embeddings plus keyword matching: finds both meaning and exact terms."
+      },
+      {
+        "label": "Local model",
+        "detail": "Language model served with Ollama on local hardware, with no cloud AI."
+      },
+      {
+        "label": "Answer",
+        "detail": "In Spanish or English, streamed, with links to the source documents."
+      }
+    ]
   }
 }

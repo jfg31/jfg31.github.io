@@ -33,5 +33,51 @@
       "solution": "One repository, three pieces on top of Firebase:\n\n- **Mobile app** in React Native (Expo) and TypeScript: a daily feed of full-screen cards, customizable backgrounds, fonts and colors, sharing a card as an image, English and Spanish UI, offline mode and push notifications.\n- **Web admin panel** in React and Vite, with restricted access, to write, schedule and translate content and to see usage stats.\n- **Serverless backend** on Cloud Functions: it assembles the day's feed at the same time every morning and falls back gracefully when nothing is scheduled.\n\nI also handled builds, TestFlight, App Store review and the post-launch fixes.",
       "outcome": "The app is published and running in production on the App Store (iOS), with a live [landing page](https://softlyalma.web.app/) and admin panel.\n\nIt ships 345 bilingual quotes and poems, refreshes itself daily, and had a second iteration that added push notifications. It is the most complete proof that I can design, build, ship and maintain a product, not just automate processes."
     }
+  },
+  "diagram": {
+    "es": [
+      {
+        "label": "Panel de admin",
+        "detail": "React y Vite con acceso restringido: escribir, programar y traducir contenido."
+      },
+      {
+        "label": "Firestore",
+        "detail": "345 frases y poemas bilingües, curados a mano."
+      },
+      {
+        "label": "Cloud Functions",
+        "detail": "Arman el feed del día cada mañana a la misma hora, con respaldo si no hay nada programado."
+      },
+      {
+        "label": "App móvil",
+        "detail": "React Native: tarjetas a pantalla completa, modo offline y notificaciones push."
+      },
+      {
+        "label": "App Store",
+        "detail": "TestFlight y revisión de Apple; publicada y en producción en iOS."
+      }
+    ],
+    "en": [
+      {
+        "label": "Admin panel",
+        "detail": "React and Vite with restricted access: write, schedule and translate content."
+      },
+      {
+        "label": "Firestore",
+        "detail": "345 bilingual quotes and poems, curated by hand."
+      },
+      {
+        "label": "Cloud Functions",
+        "detail": "Assemble the day's feed every morning at the same time, with a fallback if nothing is scheduled."
+      },
+      {
+        "label": "Mobile app",
+        "detail": "React Native: full-screen cards, offline mode and push notifications."
+      },
+      {
+        "label": "App Store",
+        "detail": "TestFlight and Apple review; published and running in production on iOS."
+      }
+    ]
   }
 }

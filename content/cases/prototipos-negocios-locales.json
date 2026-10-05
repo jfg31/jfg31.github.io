@@ -31,5 +31,43 @@
       "solution": "Three prototypes or proposals for real businesses, from need to pitch, plus a derived generic product:\n\n- **ChinoBarber (barbershop):** a site with a gallery and online booking, live availability of time slots, confirmation emails and an admin panel. I rebuilt it in plain PHP with SQLite/MySQL so it runs on basic shared hosting.\n- **OnlyNoise (car crew):** a site with scroll-driven slideshows (no libraries), events and an album gallery, plus a role-based admin panel and a Node.js, Express and PostgreSQL backend.\n- **The Brow Bar, queue system (beauty business):** a FIFO queue with SMS alerts so customers don't have to wait standing in line. I designed the architecture and wrote a commercial proposal with flow diagrams and wireframes, which I sent to the business.\n- **Turnos, landing page (generic product, built afterwards):** I generalized the queue idea for any business with a waiting line and built its landing page after exploring three design directions. It isn't tied to any specific business.",
       "outcome": "None has gone to production yet; they gave me real practice in discovering needs, building fast and pitching. They stopped at prototype stage and were not paid contracts. Turnos is a product of my own, with no business attached.\n\nWhat they show: spotting real needs, building end to end (design, backend, security, testing, deployment guides) and pitching the solution, including a formal commercial proposal, to non-technical business owners."
     }
+  },
+  "diagram": {
+    "es": [
+      {
+        "label": "Necesidad detectada",
+        "detail": "Una barbería, un crew de carros y un negocio de belleza, por iniciativa propia."
+      },
+      {
+        "label": "Prototipo",
+        "detail": "Construido de punta a punta: PHP con SQLite o Node.js con PostgreSQL."
+      },
+      {
+        "label": "Propuesta",
+        "detail": "Propuesta comercial con diagramas de flujo y wireframes, presentada al negocio."
+      },
+      {
+        "label": "Turnos",
+        "detail": "La idea de la fila, generalizada en un producto para cualquier negocio con espera."
+      }
+    ],
+    "en": [
+      {
+        "label": "Spotted need",
+        "detail": "A barbershop, a car crew and a beauty business, on my own initiative."
+      },
+      {
+        "label": "Prototype",
+        "detail": "Built end to end: PHP with SQLite, or Node.js with PostgreSQL."
+      },
+      {
+        "label": "Pitch",
+        "detail": "A commercial proposal with flow diagrams and wireframes, presented to the business."
+      },
+      {
+        "label": "Turnos",
+        "detail": "The queue idea, generalized into a product for any business with a waiting line."
+      }
+    ]
   }
 }

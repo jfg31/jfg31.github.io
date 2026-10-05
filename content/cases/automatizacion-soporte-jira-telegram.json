@@ -31,5 +31,51 @@
       "solution": "An n8n-based platform with four connected pieces, all fed by Jira:\n\n- A Telegram bot with 16+ workflows: commands such as `/resumen DEMO-101` or `/ver DEMO-101`, interactive multi-step flows, scheduled monitors (stale tickets, overloaded queue, pending reviews) and daily and weekly HTML reports.\n- An agent that turns plain-language questions in Spanish or English into JQL using a local model (Ollama), queries Jira, and replies with a report that includes an AI-written analysis.\n- A statistics dashboard covering every ticket from 2025 and 2026, refreshed automatically every working day.\n- A real-time monitor showing the state of each workflow: running, succeeded, or failed.\n\nLocal hardware, local models, no cloud AI: ticket data is never sent to an external AI service.",
       "outcome": "16+ workflows in operation, with HTML reports generated on a recurring basis since May 2026. The team can query tickets and request analysis from chat without writing JQL, and has a historical 2025–2026 dashboard. A small group uses it today; forwarding workflow-failure alerts to Telegram is the next step."
     }
+  },
+  "diagram": {
+    "es": [
+      {
+        "label": "Jira",
+        "detail": "Fuente de todo: las cuatro piezas de la plataforma se alimentan de los tickets."
+      },
+      {
+        "label": "n8n",
+        "detail": "Más de 16 workflows: monitores programados y reportes diarios y semanales en HTML."
+      },
+      {
+        "label": "LLM local",
+        "detail": "Ollama traduce preguntas en lenguaje natural a JQL; los datos no salen a ninguna IA externa."
+      },
+      {
+        "label": "Bot de Telegram",
+        "detail": "Comandos como /resumen DEMO-101, respondidos en el chat del equipo."
+      },
+      {
+        "label": "Dashboard",
+        "detail": "Todos los tickets de 2025 y 2026, actualizados cada día laborable."
+      }
+    ],
+    "en": [
+      {
+        "label": "Jira",
+        "detail": "The source for everything: all four pieces of the platform are fed by tickets."
+      },
+      {
+        "label": "n8n",
+        "detail": "16+ workflows: scheduled monitors plus daily and weekly HTML reports."
+      },
+      {
+        "label": "Local LLM",
+        "detail": "Ollama turns plain-language questions into JQL; ticket data never reaches an external AI."
+      },
+      {
+        "label": "Telegram bot",
+        "detail": "Commands such as /resumen DEMO-101, answered in the team chat."
+      },
+      {
+        "label": "Dashboard",
+        "detail": "Every ticket from 2025 and 2026, refreshed each working day."
+      }
+    ]
   }
 }
