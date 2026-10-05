@@ -1,0 +1,207 @@
+---
+// Diagrama de pasos con lente de vidrio (tema glass). Los datos vienen del contrato (DiagramStep[]).
+// - <ol class="diagram-steps">: siempre en el DOM; es la versión sin JS y la que leen los lectores de pantalla.
+// - Dos SVG decorativos (aria-hidden): fila en escritorio y columna en móvil; el CSS muestra uno según el ancho.
+// - scripts/lens.ts lee las posiciones de los <g data-step> generados aquí y monta la lente encima.
+import type { DiagramStep } from '../contract';
+import { layoutSteps, layoutStepsVertical, wrapLabel, type Box } from './scripts/layout';
+
+interface Props {
+  steps: DiagramStep[];
+  title: string;
+  hint: string;
+  id: string;
+  /** Recorrido automático de la lente al entrar en pantalla (solo el diagrama del hero). */
+  tour?: boolean;
+}
+
+const { steps, title, hint, id, tour = false } = Astro.props;
+
+const FONT = 17; // tamaño de la etiqueta, en unidades del viewBox
+const LINE = 20;
+const CHAR = 0.56; // ancho medio de un carácter, en em (aproximación para partir líneas)
+
+interface Node extends Box { cx: number; cy: number; lines: string[]; ty: number }
+
+function toNodes(boxes: Box[]): Node[] {
+  return boxes.map((b, i) => {
+    const max = Math.max(4, Math.floor((b.w - 24) / (FONT * CHAR)));
+    const lines = wrapLabel(steps[i].label, max);
+    const cx = b.x + b.w / 2;
+    const cy = b.y + b.h / 2;
+    return { ...b, cx, cy, lines, ty: cy - ((lines.length - 1) * LINE) / 2 + FONT * 0.35 };
+  });
+}
+
+const n = steps.length;
+const views = [
+  { orient: 'h', w: 1000, h: 200, nodes: toNodes(layoutSteps(n, 1000, 200)) },
+  { orient: 'v', w: 400, h: 120 * n + 40, nodes: toNodes(layoutStepsVertical(n, 400, 120 * n + 40)) },
+].map((v) => {
+  const edges = v.nodes.slice(1).map((b, i) => {
+    const a = v.nodes[i];
+    return v.orient === 'h'
+      ? `M${(a.x + a.w).toFixed(1)} ${a.cy.toFixed(1)} L${b.x.toFixed(1)} ${b.cy.toFixed(1)}`
+      : `M${a.cx.toFixed(1)} ${(a.y + a.h).toFixed(1)} L${b.cx.toFixed(1)} ${b.y.toFixed(1)}`;
+  });
+  const first = v.nodes[0];
+  const last = v.nodes[v.nodes.length - 1];
+  const flow = `M${first.cx.toFixed(1)} ${first.cy.toFixed(1)} L${last.cx.toFixed(1)} ${last.cy.toFixed(1)}`;
+  return { ...v, edges, flow, dots: `${id}-${v.orient}-dots` };
+});
+
+const titleId = `${id}-title`;
+const hintId = `${id}-hint`;
+---
+<figure
+  class="diagram"
+  id={id}
+  data-diagram
+  data-tour={tour ? '' : undefined}
+  tabindex="0"
+  aria-labelledby={titleId}
+  aria-describedby={hintId}
+>
+  <p class="diagram-title mono" id={titleId}>{title}</p>
+  <div class="stage">
+    {views.map((v) => (
+      <svg
+        class={`dg-svg dg-${v.orient}`}
+        data-orient={v.orient}
+        viewBox={`0 0 ${v.w} ${v.h}`}
+        aria-hidden="true"
+        focusable="false"
+      >
+        <defs>
+          <pattern id={v.dots} width="18" height="18" patternUnits="userSpaceOnUse">
+            <circle cx="9" cy="9" r="1" class="dot" />
+          </pattern>
+        </defs>
+        <g class="dg">
+          <rect width={v.w} height={v.h} fill={`url(#${v.dots})`} />
+          <g class="edges">
+            {v.edges.map((d) => <path class="edge" d={d} />)}
+          </g>
+          <path class="flow" d={v.flow} pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" />
+          {v.nodes.map((b, i) => (
+            <g class="node" data-step={i}>
+              <rect x={b.x.toFixed(1)} y={b.y.toFixed(1)} width={b.w.toFixed(1)} height={b.h.toFixed(1)} rx={(Math.min(b.w, b.h) / 2).toFixed(1)} />
+              <text class="lab" x={b.cx.toFixed(1)} y={b.ty.toFixed(1)} text-anchor="middle">
+                {b.lines.map((line, k) => <tspan x={b.cx.toFixed(1)} dy={k === 0 ? 0 : LINE}>{line}</tspan>)}
+              </text>
+            </g>
+          ))}
+        </g>
+      </svg>
+    ))}
+  </div>
+  <ol class="diagram-steps">
+    {steps.map((s) => (
+      <li><strong>{s.label}</strong> <span>{s.detail}</span></li>
+    ))}
+  </ol>
+  <figcaption class="caption">
+    <span class="tick" aria-hidden="true"></span>
+    <span class="cap" data-cap aria-live="polite"></span>
+    <span class="hint" id={hintId}>{hint}</span>
+  </figcaption>
+</figure>
+
+<script>
+  import { initLenses } from './scripts/lens';
+  initLenses();
+</script>
+
+<style is:global>
+  /* ===================== diagrama + lente (portado de E-liquid-glass ~434–489) ===================== */
+  .diagram { container-type: inline-size; outline-offset: 6px; border-radius: 28px; }
+  .diagram-title { color: var(--ink-3); margin-bottom: 12px; }
+  .diagram .stage {
+    position: relative;
+    background: var(--surface);
+    border-radius: 28px;
+    overflow: hidden;
+    transition: background-color .45s var(--ease-out);
+  }
+  .diagram .dg-svg { display: block; width: 100%; height: auto; touch-action: pan-y; cursor: pointer; }
+  .diagram .dg-v { display: none; }
+  /* columna en anchos estrechos: el texto de la fila quedaría por debajo de 12 px */
+  @container (max-width: 719.98px) {
+    .diagram .dg-h { display: none; }
+    .diagram .dg-v { display: block; max-width: 420px; margin-inline: auto; }
+  }
+
+  /* sin JS no hay lente: se oculta el lienzo y queda la lista con todos los pasos */
+  html:not(.js) .diagram .stage, html:not(.js) .diagram .caption { display: none; }
+  /* con JS la lista sigue en el árbol de accesibilidad, solo se oculta a la vista */
+  .js .diagram .diagram-steps {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .diagram-steps { counter-reset: dstep; border-top: 1px solid var(--rule); }
+  .diagram-steps li {
+    counter-increment: dstep;
+    display: grid;
+    grid-template-columns: 2.5em 1fr;
+    gap: 2px 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-2);
+  }
+  .diagram-steps li::before {
+    content: counter(dstep, decimal-leading-zero);
+    grid-row: span 2;
+    font-family: var(--mono);
+    font-size: var(--label);
+    color: var(--accent-ink);
+    padding-top: .3em;
+  }
+  .diagram-steps strong { color: var(--ink); font-weight: 600; }
+
+  .diagram .caption {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    margin-top: 14px;
+    min-height: 26px;
+    font-size: 16px;
+    color: var(--ink-2);
+  }
+  .diagram .caption .tick { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; transform: translateY(-1px); }
+  /* la pista se ve hasta que la lente pone el primer detalle; sigue describiendo la figura para lectores de pantalla */
+  .diagram .cap:empty { display: none; }
+  .diagram .cap:not(:empty) + .hint {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* vocabulario del diagrama (SVG) */
+  .dg .dot { fill: var(--dot); }
+  .dg .edge { fill: none; stroke: var(--line); stroke-width: 1.5; }
+  .dg .flow { fill: none; stroke: var(--accent); stroke-width: 2.25; stroke-linecap: round; }
+  .dg .node rect { fill: var(--node); stroke: var(--line-2); stroke-width: 1; transition: stroke .3s; }
+  .dg .node.is-on rect { stroke: var(--accent); stroke-width: 1.5; }
+  .dg .lab { font-family: var(--sans); font-size: 17px; font-weight: 560; fill: var(--ink); letter-spacing: -.005em; }
+  .lens-layer { pointer-events: none; }
+  .lens-bed { fill: var(--surface); }
+  .lens-tint { fill: var(--lens-tint); }
+  .lens-shadow { fill: var(--lens-shadow); }
+  .rim-a { stop-color: var(--spec-a); }
+  .rim-0 { stop-color: rgba(255, 255, 255, 0); }
+  .rim-b { stop-color: var(--spec-b); }
+  .edge-0 { stop-color: rgba(255, 255, 255, 0); }
+  .edge-1 { stop-color: var(--lens-edge); }
+  .edge-2 { stop-color: var(--glass-shadow); }
+  .mask-in { stop-color: #fff; }
+  .mask-out { stop-color: #000; }
+</style>

@@ -1,6 +1,7 @@
 ---
 // Provisional (Task 5): renderiza los mismos datos que base. La Task 7 la convierte en la página final.
 import Layout from './Layout.astro';
+import Diagram from './Diagram.astro';
 import type { ThemeProps } from '../contract';
 import { featuredCases, groupByCategory } from '../../lib/cases';
 import { localePath } from '../../i18n/ui';
@@ -21,6 +22,9 @@ const sections = [
       <h1 id="name">{profile.name}</h1>
       <p class="lead">{text.headline}</p>
       <div class="prose" set:html={md(text.about)} />
+      <div class="hero-stage" style="margin-top: clamp(28px, 5vh, 56px)">
+        <Diagram steps={ui.sitePipeline} title={ui.sitePipelineTitle} hint={ui.lensHint} id="pipeline" tour />
+      </div>
     </section>
     <section id="work" aria-labelledby="work-h">
       <h2 id="work-h">{ui.featured}</h2>
