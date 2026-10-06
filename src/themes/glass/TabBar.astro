@@ -5,6 +5,8 @@ import { localePath } from '../../i18n/ui';
 export interface Section {
   id: string;
   label: string;
+  /** Enlace a otra página en vez de un ancla #id (no participa en el scroll-spy). */
+  href?: string;
 }
 
 interface Props {
@@ -27,11 +29,15 @@ const pages = [
   <span class="drop" aria-hidden="true"></span>
   {
     sections.length > 0
-      ? sections.map((s) => (
-          <a href={`#${s.id}`} data-sec={s.id} aria-current="false">
-            {s.label}
-          </a>
-        ))
+      ? sections.map((s) =>
+          s.href ? (
+            <a href={s.href}>{s.label}</a>
+          ) : (
+            <a href={`#${s.id}`} data-sec={s.id} aria-current="false">
+              {s.label}
+            </a>
+          ),
+        )
       : pages.map((p) => (
           <a href={localePath(locale, p.key)} aria-current={p.key === page ? 'page' : undefined}>
             {p.label}

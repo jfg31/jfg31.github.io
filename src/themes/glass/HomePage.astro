@@ -7,6 +7,7 @@ import ProjectIndex from './ProjectIndex.astro';
 import type { ThemeProps } from '../contract';
 import { featuredCases } from '../../lib/cases';
 import { md } from '../../lib/markdown';
+import { localePath } from '../../i18n/ui';
 import { currentRole, pad2, splitHeadline } from './scripts/text';
 
 type Props = ThemeProps;
@@ -15,12 +16,13 @@ const text = profile.text[locale];
 const [headA, headB] = splitHeadline(text.headline);
 const role = currentRole(text.experience);
 const featured = featuredCases(cases);
-// orden de la barra flotante: Trabajo, Índice, Contacto (ids que usa scripts/controls.ts).
+// orden de la barra flotante: Trabajo, Índice, Contacto (ids que usa scripts/controls.ts) y Sobre mí (enlace a página).
 // Sin casos destacados no se renderiza #work, así que su pestaña tampoco.
 const sections = [
   ...(featured.length > 0 ? [{ id: 'work', label: ui.sections.work }] : []),
   { id: 'index', label: ui.sections.index },
   { id: 'contact', label: ui.sections.contact },
+  { id: 'about', label: ui.nav.about, href: localePath(locale, 'about') },
 ];
 ---
 <Layout locale={locale} ui={ui} profile={profile} sections={sections}>
