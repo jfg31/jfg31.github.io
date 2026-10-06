@@ -7,9 +7,9 @@ Checklist accionable de tareas pendientes. Este archivo debe quedar vacío (todo
 - [x] Plan B: pipeline del sitio (exportar desde el cerebro, lint de privacidad, build)
 - [x] Antes del primer push público: corregir email de autor y aplanar historial
 - [x] Publicar en https://jfg31.github.io
-- [x] Plan C: diseño del sitio (tema `glass`) + `astro check` en CI (en la rama `feat/glass-theme`)
-- [ ] Publicar el tema `glass`: visto bueno de Jose en local y push a `main`
-- [ ] Probar el tema `glass` en Safari y Firefox reales (respaldo sin refracción solo simulado en Chromium)
+- [x] Plan C: diseño del sitio (tema `glass`) + `astro check` en CI 
+- [x] Publicar el tema `glass`
+- [ ] (Solo Jose) Probar el tema `glass` en Safari/iPhone y Firefox reales (respaldo sin refracción solo simulado en Chromium)
 - [ ] Dominio propio
 - [ ] Derivar el resume desde el documento maestro
 - [ ] Derivar LinkedIn desde el documento maestro

@@ -2,11 +2,11 @@
 
 ## Último update
 
-2026-10-05
+2026-10-06
 
 ## En qué paso está
 
-Publicado en https://jfg31.github.io con el tema `base`. En la rama `feat/glass-theme` el sitio ya usa el tema `glass` ("Liquid Glass", Plan C), activado en `portfolio.config.mjs` y con `pnpm release:check` en verde. Falta que Jose lo vea en local y dé el visto bueno para hacer push (push a `main` = deploy).
+Publicado en https://jfg31.github.io con el tema `glass` ("Liquid Glass", Plan C), aprobado por Jose el 2026-10-06. El tema `base` sigue disponible como respaldo (`PORTFOLIO_THEME=base`).
 
 ## Qué se hizo en la última sesión
 
@@ -14,9 +14,10 @@ Publicado en https://jfg31.github.io con el tema `base`. En la rama `feat/glass-
 - Pulido final: curvas y tiempos unificados en tokens, respuesta al presionar, hover solo con puntero fino, física de la lente independiente de la tasa de refresco, recorrido del hero ≤ 5 s, `theme-color`, foco nunca tapado por la barra flotante.
 - Accesibilidad: roles de pestañas solo con JS, figura del diagrama enfocable solo con la lente, barra flotante con nombre propio, pista del diagrama que menciona las flechas.
 - Tests de las ayudas de texto del tema glass.
+- "Sobre mí" agregado a la barra flotante de inicio (pedido de Jose).
 
 ## Próximos pasos inmediatos
 
-- Revisión de Jose en local (`pnpm dev`): EN/ES, claro/oscuro/sistema, escritorio y móvil. Con su sí, push a `main`.
+- Probar en Safari/iPhone y Firefox reales (solo Jose).
 - Resolver los pendientes de confirmar con Jose (ver `docs/TODO.md`).
 - Después: resume, LinkedIn y perfil de GitHub desde el documento maestro.
