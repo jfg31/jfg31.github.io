@@ -6,6 +6,7 @@
 //   también hace la figura enfocable (tabindex) y la describe con la pista: sin JS no hay parada de tabulación muerta.
 import type { DiagramStep } from '../contract';
 import { layoutSteps, layoutStepsVertical, wrapLabel, type Box } from './scripts/layout';
+import { FONT, VIEW_H, VIEW_V, maxLineChars } from '../../../scripts/lib/diagram-limits.mjs';
 
 interface Props {
   steps: DiagramStep[];
@@ -18,15 +19,14 @@ interface Props {
 
 const { steps, title, hint, id, tour = false } = Astro.props;
 
-const FONT = 17; // tamaño de la etiqueta, en unidades del viewBox
 const LINE = 20;
-const CHAR = 0.56; // ancho medio de un carácter, en em (aproximación para partir líneas)
 
 interface Node extends Box { cx: number; cy: number; lines: string[]; ty: number }
 
-function toNodes(boxes: Box[]): Node[] {
+// Caracteres por línea: viene de scripts/lib/diagram-limits.mjs, el mismo módulo con el que el parser
+// rechaza las palabras que no caben, así que nunca queda una palabra más ancha que el nodo.
+function toNodes(boxes: Box[], max: number): Node[] {
   return boxes.map((b, i) => {
-    const max = Math.max(4, Math.floor((b.w - 24) / (FONT * CHAR)));
     const lines = wrapLabel(steps[i].label, max);
     const cx = b.x + b.w / 2;
     const cy = b.y + b.h / 2;
@@ -36,8 +36,8 @@ function toNodes(boxes: Box[]): Node[] {
 
 const n = steps.length;
 const views = [
-  { orient: 'h', w: 1000, h: 200, nodes: toNodes(layoutSteps(n, 1000, 200)) },
-  { orient: 'v', w: 400, h: 120 * n + 40, nodes: toNodes(layoutStepsVertical(n, 400, 120 * n + 40)) },
+  { orient: 'h', w: VIEW_H.w, h: VIEW_H.h, nodes: toNodes(layoutSteps(n, VIEW_H.w, VIEW_H.h), maxLineChars(n, 'h')) },
+  { orient: 'v', w: VIEW_V.w, h: 120 * n + 40, nodes: toNodes(layoutStepsVertical(n, VIEW_V.w, 120 * n + 40), maxLineChars(n, 'v')) },
 ].map((v) => {
   const edges = v.nodes.slice(1).map((b, i) => {
     const a = v.nodes[i];

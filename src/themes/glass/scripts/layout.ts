@@ -1,16 +1,13 @@
 // Geometría pura del diagrama del tema glass (sin DOM: se usa en el build de Astro y en los tests).
 
-export interface Box { x: number; y: number; w: number; h: number }
+import { MARGIN, GAP_RATIO, NODE_H, nodeWidth } from '../../../../scripts/lib/diagram-limits.mjs';
 
-const MARGIN = 0.04; // fracción del ancho
-const GAP_RATIO = 0.35; // separación relativa al ancho de un nodo
-const NODE_H = 0.46; // fracción del alto
+export interface Box { x: number; y: number; w: number; h: number }
 
 /** Nodos en fila, centrados verticalmente, con márgenes y separación iguales. */
 export function layoutSteps(count: number, width: number, height: number): Box[] {
   const margin = width * MARGIN;
-  const usable = width - margin * 2;
-  const w = usable / (count + (count - 1) * GAP_RATIO);
+  const w = nodeWidth(count, width); // misma fórmula que usa el parser para los límites de etiqueta
   const gap = w * GAP_RATIO;
   const h = height * NODE_H;
   const y = (height - h) / 2;
