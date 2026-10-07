@@ -74,10 +74,27 @@ describe('parseResume', () => {
     expect(() => parse(doc({ en: mutate(locale(EN)) }))).toThrow(error);
   });
 
-  it('falla si ES y EN no tienen los mismos conteos', () => {
-    const en = locale(EN).replace('- [ia] Bullet dos ia.', '- [ia, fullstack] Bullet dos ia.').replace('- [fullstack] Bullet dos fs.\n', '');
-    const es = locale(ES).replace('- [fullstack] Bullet dos fs.\n', '');
-    expect(() => parse(doc({ es, en }))).toThrow(/versión fullstack: ES tiene 2 bullets de experiencia y EN 3|debe haber entre 3 y 5/);
+  it('falla si ES y EN tienen diferente número de bullets de experiencia', () => {
+    // ES: ai=4, fullstack=3 (add 1 [ia] bullet)
+    const es = locale(ES).replace(
+      '- [ia, fullstack] Bullet tres.',
+      '- [ia] Bullet extra.\n- [ia, fullstack] Bullet tres.'
+    );
+    // EN: ai=5, fullstack=4 (add 1 [ia, fullstack] + 1 [ia] bullets)
+    const en = locale(EN).replace(
+      '- [ia, fullstack] Bullet tres.',
+      '- [ia, fullstack] Bullet extra1.\n- [ia] Bullet extra2.\n- [ia, fullstack] Bullet tres.'
+    );
+    expect(() => parse(doc({ es, en }))).toThrow(/versión ia: ES tiene 4 bullets de experiencia y EN 5/);
+  });
+
+  it('falla si ES y EN tienen diferente número de líneas de educación', () => {
+    // EN: add 1 education line, ES: stays at 1
+    const en = locale(EN).replace(
+      'B.S. Computer Science | UPRB | 2021',
+      'B.S. Computer Science | UPRB | 2021\nM.S. Software Engineering | MIT | 2023'
+    );
+    expect(() => parse(doc({ en }))).toThrow(/versión ia: ES tiene 1 líneas de educación y EN 2/);
   });
 
   it('falla si los proyectos ES y EN no apuntan a los mismos casos', () => {
