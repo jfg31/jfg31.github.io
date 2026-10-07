@@ -2,6 +2,7 @@
 import Layout from './Layout.astro';
 import type { ThemeProps } from '../contract';
 import { md } from '../../lib/markdown';
+import { resumeLinks, resumeLabel } from '../../lib/resume';
 
 type Props = ThemeProps;
 const { locale, ui, profile } = Astro.props;
@@ -23,4 +24,8 @@ const sections = [
       <div set:html={md(body)} />
     </section>
   ))}
+  <section>
+    <h2>{resumeLabel(locale)}</h2>
+    <ul>{resumeLinks(locale).map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+  </section>
 </Layout>

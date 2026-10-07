@@ -3,6 +3,7 @@ import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { checkContract } from '../scripts/check-contract.mjs';
+import { RESUME_VARIANTS, resumeFileBase, resumePath, variantSlug } from '../scripts/lib/resume-meta.mjs';
 
 let root;
 let distDir;
@@ -24,10 +25,27 @@ beforeEach(async () => {
     join(contentDir, 'cases', 'uno.json'),
     JSON.stringify({ slug: 'uno', text: { en: { title: 'Jira & Telegram' }, es: { title: 'Jira y Telegram' } } }),
   );
+  await writeFile(join(contentDir, 'profile.json'), JSON.stringify({ name: 'Jose Flores' }));
+  const variants = {};
+  for (const v of RESUME_VARIANTS) {
+    variants[v] = {};
+    for (const l of ['en', 'es']) variants[v][l] = { title: v === 'ai' && l === 'en' ? 'A & B' : `Title ${v} ${l}` };
+  }
+  await writeFile(join(contentDir, 'resume.json'), JSON.stringify({ variants }));
+  await mkdir(join(distDir, 'resume'), { recursive: true });
   for (const l of ['en', 'es']) {
     await page(l);
     await page(`${l}/projects`, indexLinks('uno')(l));
-    await page(`${l}/about`);
+    await page(`${l}/about`, RESUME_VARIANTS.map((v) => `<a href="${resumePath(l, v)}">x</a>`).join(''));
+    for (const v of RESUME_VARIANTS) {
+      const base = resumeFileBase('Jose Flores', v, l);
+      const title = variants[v][l].title.replace(/&/g, '&amp;');
+      await page(
+        `${l}/resume/${variantSlug(l, v)}`,
+        `<h1>${title}</h1><a href="/resume/${base}.pdf">pdf</a><a href="/resume/${base}.docx">docx</a>`,
+      );
+      for (const ext of ['pdf', 'docx']) await writeFile(join(distDir, 'resume', `${base}.${ext}`), 'x');
+    }
   }
 });
 
@@ -87,5 +105,29 @@ describe('checkContract', () => {
     expect(problems[0]).toContain('falta');
     expect(problems[0]).toMatch(/content.*cases/);
     expect(problems[0]).toContain('pnpm export');
+  });
+
+  it('pasa con el resume completo', async () => {
+    await page('en/projects/uno', '<h1>Jira &amp; Telegram</h1>');
+    await page('es/projects/uno', '<h1>Jira y Telegram</h1>');
+    expect(await checkContract({ distDir, contentDir })).toEqual([]);
+  });
+
+  it('reporta página de resume, descarga y enlace desde Sobre mí faltantes', async () => {
+    await page('en/projects/uno', '<h1>Jira &amp; Telegram</h1>');
+    await page('es/projects/uno', '<h1>Jira y Telegram</h1>');
+    await rm(join(distDir, 'es/resume/ia'), { recursive: true });
+    await rm(join(distDir, 'resume', 'JoseFlores-Resume-FullStack-EN.docx'));
+    await page('en/about', `<a href="${resumePath('en', 'ai')}">x</a>`);
+    expect(await checkContract({ distDir, contentDir })).toEqual([
+      'falta resume/JoseFlores-Resume-FullStack-EN.docx',
+      'en/about/index.html: no enlaza /en/resume/fullstack/',
+      'falta es/resume/ia/index.html',
+    ]);
+  });
+
+  it('reporta si falta content/resume.json', async () => {
+    await rm(join(contentDir, 'resume.json'));
+    expect(await checkContract({ distDir, contentDir })).toContain(`falta ${join(contentDir, 'resume.json')} — correr pnpm export`);
   });
 });

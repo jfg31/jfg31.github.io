@@ -4,6 +4,7 @@ import './glass.css';
 import './sections.css';
 import type { Locale, Profile, UiStrings } from '../contract';
 import { localePath, otherLocale } from '../../i18n/ui';
+import { resumeLinks, resumeLabel } from '../../lib/resume';
 import ThemeToggle from './ThemeToggle.astro';
 import TabBar, { type Section } from './TabBar.astro';
 
@@ -109,6 +110,7 @@ const pages = [
             {pages.map((p) => (
               <li><a href={localePath(locale, p.key)} aria-current={p.key === page ? 'page' : undefined}>{p.label}</a></li>
             ))}
+              <li><a href={resumeLinks(locale)[0].href}>{resumeLabel(locale)}</a></li>
           </ul>
           <span>© {year} <span translate="no">{profile.name}</span></span>
         </div>

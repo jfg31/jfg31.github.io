@@ -3,6 +3,7 @@
 import Layout from './Layout.astro';
 import type { ThemeProps } from '../contract';
 import { md } from '../../lib/markdown';
+import { resumeLinks, resumeLabel } from '../../lib/resume';
 import { currentRole, splitHeadline } from './scripts/text';
 
 type Props = ThemeProps;
@@ -34,6 +35,12 @@ const sections = [
           <div class="prose" set:html={md(body)} />
         </section>
       ))}
+      <section class="facts-row" aria-labelledby="resume-h">
+        <h2 class="label-h" id="resume-h">{resumeLabel(locale)}</h2>
+        <div class="prose">
+          <ul>{resumeLinks(locale).map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+        </div>
+      </section>
     </div>
   </div>
 </Layout>

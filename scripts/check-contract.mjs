@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { isMain } from './lib/cli.mjs';
+import { RESUME_VARIANTS, resumeFileBase, resumePath, variantSlug } from './lib/resume-meta.mjs';
 
 const GENERAL_PAGES = ['', 'projects', 'about'];
 
@@ -15,6 +16,44 @@ function stripHead(html) {
 
 function pagePath(distDir, locale, sub) {
   return join(distDir, locale, sub, 'index.html');
+}
+
+async function checkResume({ distDir, contentDir, locales, problems }) {
+  const resumeJson = join(contentDir, 'resume.json');
+  if (!existsSync(resumeJson)) {
+    problems.push(`falta ${resumeJson} — correr pnpm export`);
+    return;
+  }
+  const resume = JSON.parse(await readFile(resumeJson, 'utf8'));
+  const { name } = JSON.parse(await readFile(join(contentDir, 'profile.json'), 'utf8'));
+  for (const locale of locales) {
+    const aboutPath = pagePath(distDir, locale, 'about');
+    const about = existsSync(aboutPath) ? await readFile(aboutPath, 'utf8') : null;
+    for (const variant of RESUME_VARIANTS) {
+      const base = resumeFileBase(name, variant, locale);
+      for (const ext of ['pdf', 'docx']) {
+        if (!existsSync(join(distDir, 'resume', `${base}.${ext}`))) problems.push(`falta resume/${base}.${ext}`);
+      }
+      if (about !== null && !about.includes(resumePath(locale, variant))) {
+        problems.push(`${locale}/about/index.html: no enlaza ${resumePath(locale, variant)}`);
+      }
+    }
+    for (const variant of RESUME_VARIANTS) {
+      const rel = `${locale}/resume/${variantSlug(locale, variant)}`;
+      const path = pagePath(distDir, locale, `resume/${variantSlug(locale, variant)}`);
+      if (!existsSync(path)) {
+        problems.push(`falta ${rel}/index.html`);
+        continue;
+      }
+      const html = stripHead(await readFile(path, 'utf8'));
+      const title = resume.variants[variant][locale].title;
+      if (!html.includes(title) && !html.includes(escapeHtml(title))) problems.push(`${rel}: no aparece el título "${title}"`);
+      const base = resumeFileBase(name, variant, locale);
+      for (const ext of ['pdf', 'docx']) {
+        if (!html.includes(`/resume/${base}.${ext}`)) problems.push(`${rel}: no enlaza /resume/${base}.${ext}`);
+      }
+    }
+  }
 }
 
 export async function checkContract({ distDir, contentDir, locales = ['en', 'es'] }) {
@@ -57,6 +96,7 @@ export async function checkContract({ distDir, contentDir, locales = ['en', 'es'
       if (!html.includes(title) && !html.includes(escapeHtml(title))) problems.push(`${rel}: no aparece el título "${title}"`);
     }
   }
+  await checkResume({ distDir, contentDir, locales, problems });
   return problems;
 }
 
