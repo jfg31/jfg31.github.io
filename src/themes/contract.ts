@@ -45,6 +45,25 @@ export interface Profile {
   text: Record<Locale, ProfileText>;
 }
 
+export type ResumeVariant = 'ai' | 'fullstack';
+export const RESUME_VARIANT_LIST: ResumeVariant[] = ['ai', 'fullstack'];
+
+export interface ResumeText {
+  title: string;
+  summary: string;
+  skills: { group: string; items: string }[];
+  experience: { role: string; company: string; dates: string; bullets: string[] };
+  projects: { name: string; slug: string; text: string }[];
+  education: { title: string; institution: string; year: string }[];
+  certifications: { title: string; issuer: string; year: string }[];
+}
+
+/** Generado por `pnpm export` desde Resume.md; nunca contiene la sección privada. */
+export interface Resume {
+  updated: string;
+  variants: Record<ResumeVariant, Record<Locale, ResumeText>>;
+}
+
 export interface UiStrings {
   siteTitle: string;
   nav: { home: string; projects: string; about: string };

@@ -5,7 +5,7 @@ import portfolio from './portfolio.config.mjs';
 const theme = process.env.PORTFOLIO_THEME || portfolio.theme;
 
 export default defineConfig({
-  site: 'https://jfg31.github.io',
+  site: portfolio.site,
   build: { format: 'directory' },
   vite: {
     resolve: {

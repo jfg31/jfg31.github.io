@@ -1,0 +1,98 @@
+---
+// Documento del resume: misma página para pantalla e impresión (PDF). Una columna y encabezados reales para los ATS.
+import './resume.css';
+import type { Locale, Profile, Resume, ResumeVariant } from '../themes/contract';
+import { otherLocale } from '../i18n/ui';
+import { RESUME_LABELS, RESUME_VARIANTS, contactItems, resumeFileHref, resumePath } from '../../scripts/lib/resume-meta.mjs';
+
+interface Props { locale: Locale; variant: ResumeVariant; profile: Profile; resume: Resume; site: string }
+const { locale, variant, profile, resume, site } = Astro.props;
+const text = resume.variants[variant][locale];
+const labels = RESUME_LABELS[locale];
+const variants = RESUME_VARIANTS as ResumeVariant[];
+const variantLabels: Record<ResumeVariant, string> = labels.variants;
+const alt = otherLocale(locale);
+const contact: { key: string; text: string; href?: string }[] = contactItems({ profile, site, privateContact: undefined });
+const caseUrl = (slug: string) => `${site}/${locale}/projects/${slug}/`;
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>{`${labels.resume} — ${profile.name} · ${variantLabels[variant]}`}</title>
+    <meta name="description" content={text.summary} />
+    <link rel="alternate" hreflang={alt} href={resumePath(alt, variant)} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&display=swap" />
+  </head>
+  <body>
+    <nav class="toolbar" aria-label={labels.resume}>
+      <a href={`/${locale}/`}>← {labels.back}</a>
+      <div class="group" role="group" aria-label={labels.version}>
+        {variants.map((v) => (
+          <a href={resumePath(locale, v)} aria-current={v === variant ? 'page' : undefined}>{variantLabels[v]}</a>
+        ))}
+      </div>
+      <a href={resumePath(alt, variant)} hreflang={alt} lang={alt}>{RESUME_LABELS[alt].languageName}</a>
+      <div class="group downloads">
+        <a href={resumeFileHref(profile.name, variant, locale, 'pdf')} download>{labels.downloadPdf}</a>
+        <a href={resumeFileHref(profile.name, variant, locale, 'docx')} download>{labels.downloadDocx}</a>
+      </div>
+    </nav>
+
+    <main class="sheet">
+      <header>
+        <h1 translate="no">{profile.name}</h1>
+        <p class="role">{text.title}</p>
+        <ul class="contact" data-resume-contact>
+          {contact.map((c) => <li>{c.href ? <a href={c.href}>{c.text}</a> : c.text}</li>)}
+        </ul>
+      </header>
+
+      <section>
+        <h2>{labels.sections.summary}</h2>
+        <p>{text.summary}</p>
+      </section>
+
+      <section>
+        <h2>{labels.sections.skills}</h2>
+        <ul class="plain">
+          {text.skills.map((s) => <li><strong>{s.group}:</strong> {s.items}</li>)}
+        </ul>
+      </section>
+
+      <section>
+        <h2>{labels.sections.experience}</h2>
+        <div class="entry">
+          <h3>{text.experience.role} · {text.experience.company}</h3>
+          <span class="dates">{text.experience.dates}</span>
+        </div>
+        <ul>{text.experience.bullets.map((b) => <li>{b}</li>)}</ul>
+      </section>
+
+      <section>
+        <h2>{labels.sections.projects}</h2>
+        <ul>
+          {text.projects.map((p) => <li><a href={caseUrl(p.slug)}><strong>{p.name}</strong></a> — {p.text}</li>)}
+        </ul>
+      </section>
+
+      <section>
+        <h2>{labels.sections.education}</h2>
+        {text.education.map((e) => (
+          <div class="entry"><h3>{e.title} · {e.institution}</h3><span class="dates">{e.year}</span></div>
+        ))}
+      </section>
+
+      <section>
+        <h2>{labels.sections.certifications}</h2>
+        {text.certifications.map((c) => (
+          <div class="entry"><h3>{c.title} · {c.issuer}</h3><span class="dates">{c.year}</span></div>
+        ))}
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+---
+// Resume: independiente del tema activo (no usa @theme). Ver src/resume/.
+import ResumeDocument from '../../../resume/ResumeDocument.astro';
+import { LOCALES, type Locale, type ResumeVariant } from '../../../themes/contract';
+import { getProfile, getResume } from '../../../lib/content';
+import { RESUME_VARIANTS, variantSlug } from '../../../../scripts/lib/resume-meta.mjs';
+
+export function getStaticPaths() {
+  return LOCALES.flatMap((lang) =>
+    RESUME_VARIANTS.map((variant) => ({ params: { lang, variant: variantSlug(lang, variant) }, props: { variant } })),
+  );
+}
+
+const locale = Astro.params.lang as Locale;
+const { variant } = Astro.props as { variant: ResumeVariant };
+---
+<ResumeDocument locale={locale} variant={variant} profile={getProfile()} resume={getResume()} site={Astro.site!.origin} />
