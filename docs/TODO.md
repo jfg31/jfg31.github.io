@@ -9,6 +9,8 @@ Checklist accionable de tareas pendientes. Este archivo debe quedar vacío (todo
 - [x] Publicar en https://jfg31.github.io
 - [x] Plan C: diseño del sitio (tema `glass`) + `astro check` en CI 
 - [x] Publicar el tema `glass`
+- [x] Hero con pastillas de proyectos destacados, títulos cortos y diagramas con lista visible (rama `feat/hero-projects`)
+- [ ] (Solo Jose) Revisar y fusionar `feat/hero-projects`, luego publicar
 - [ ] (Solo Jose) Probar el tema `glass` en Safari/iPhone y Firefox reales (respaldo sin refracción solo simulado en Chromium)
 - [ ] Dominio propio
 - [ ] Derivar el resume desde el documento maestro

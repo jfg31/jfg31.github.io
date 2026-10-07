@@ -104,7 +104,27 @@ Dentro de la sección pública de cada idioma, una subsección `###` con una lis
 - Si existe en un idioma, debe existir en el otro, y los dos con el mismo número de pasos.
 - Sin la subsección en ningún idioma, el caso simplemente no tiene diagrama (la página del caso usa filas etiqueta | texto).
 
-El diagrama del inicio ("cómo se hace este sitio") no viene de un caso: son los pasos de `ui.sitePipeline` en `src/i18n/ui.ts`, con las mismas reglas.
+La línea "cómo se hace este sitio" del pie de página no viene de un caso: son las etiquetas de `ui.sitePipeline` en `src/i18n/ui.ts`, validadas con las mismas reglas.
+
+## Título corto (opcional)
+
+Un caso puede llevar un título corto para las pastillas del inicio y las pestañas de trabajo destacado. En el vault es una subsección más de cada sección pública, justo después del título:
+
+```markdown
+## Versión pública (ES)
+### Título
+Asistente de IA local sobre documentos internos
+### Título corto
+Asistente de IA local
+...
+## Public version (EN)
+### Title
+Local AI assistant over internal documents
+### Short title
+Local AI assistant
+```
+
+Reglas (las aplica `scripts/lib/case.mjs`; si falla, el export se detiene con el archivo y el motivo): texto plano en una línea (sin markdown ni etiquetas), no vacío, de 24 caracteres como máximo; si existe en un idioma, debe existir en el otro. Se guarda como `text[locale].shortTitle` y se omite si no existe. El tema glass usa `shortTitleOf(item, locale)` (`scripts/text.ts`): el título corto o, si falta, el título completo.
 
 ## Tema glass ("Liquid Glass")
 
@@ -112,9 +132,10 @@ Tema activo (`theme: 'glass'`). Contenido como papel liso; el vidrio solo va en 
 
 - `tokens.css` — paleta clara/oscura, vidrio, curvas (`--ease-gel`, `--ease-out`, `--ease-drawer`) y tiempos (`--t-press`, `--t-hover`, `--t-morph`, `--t-theme`). Retoques rápidos aquí.
 - `Layout.astro` — script inline anti-FOUC (tema `light|dark|system` guardado en `localStorage`, clases `js` y `motion`), controles de idioma y tema, barra flotante, banda de contacto.
-- `Diagram.astro` + `scripts/layout.ts` (geometría pura, con tests) + `scripts/lens.ts` (lente de vidrio): la `<ol>` de pasos siempre está en el DOM; con JS se oculta a la vista y la lente lee las posiciones del SVG generado. Teclado: ←/→, Inicio/Fin.
-- `WorkTabs.astro` — trabajo destacado; los roles `tablist/tab/tabpanel` los pone el script (sin JS son secciones normales).
+- `HomePage.astro` — hero con una pastilla por caso destacado (título corto y categoría, bajo `ui.selectedProjects`); cada pastilla es un ancla `#work-<slug>`.
+- `Diagram.astro` + `scripts/layout.ts` (geometría pura, con tests) + `scripts/lens.ts` (lente de vidrio): debajo del dibujo, la `<ol class="diagram-steps">` siempre visible con todos los pasos (número, etiqueta y detalle; una columna en contenedores < 720 px, dos a partir de ahí). La lente lee las posiciones del SVG generado y resalta la fila del paso bajo ella (`.is-on` + `aria-current="step"`) sin mover el layout. Teclado: ←/→, Inicio/Fin.
+- `WorkTabs.astro` — trabajo destacado; los roles `tablist/tab/tabpanel` los pone el script (sin JS son secciones normales). Los paneles tienen id `work-<slug>`: un enlace con ese hash (las pastillas, una carga directa, atrás/adelante) abre la pestaña, desplaza hasta `#work` (sin animación con movimiento reducido) y enfoca la pestaña; cambiar de pestaña actualiza el hash con `history.replaceState`.
 - `scripts/controls.ts` — barra flotante (scroll-spy, gota "gel", se encoge al bajar), luz especular y refracción del borde (solo Chromium).
 - `scripts/text.ts` — ayudas de texto (titular partido, rol actual, pila corta), con tests.
 
-Mejora progresiva: sin JS los diagramas se ven como listas con todos sus pasos y detalles y el trabajo destacado como secciones seguidas; sin refracción SVG (Safari/Firefox) queda el blur; sin `backdrop-filter`, superficie sólida (`@supports`); con `prefers-reduced-motion: reduce`, sin transiciones ni recorrido automático y la lente fija.
+Mejora progresiva: sin JS los diagramas se ven como listas con todos sus pasos y detalles (sin el dibujo), el trabajo destacado como secciones seguidas y las pastillas del hero saltan al panel de su caso; sin refracción SVG (Safari/Firefox) queda el blur; sin `backdrop-filter`, superficie sólida (`@supports`); con `prefers-reduced-motion: reduce`, sin transiciones y la lente fija.
