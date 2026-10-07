@@ -15,13 +15,13 @@ Checklist accionable de tareas pendientes. Este archivo debe quedar vacío (todo
 - [ ] Dominio propio
 - [x] Derivar el resume desde el documento maestro (publicado 2026-10-06)
 - [x] (Solo Jose) Revisar el texto de los resumes y dar teléfono/ciudad para la versión privada
-- [ ] Derivar LinkedIn desde el documento maestro
+- [x] Derivar LinkedIn desde el documento maestro (texto listo en el vault, `LinkedIn.md`; Jose lo pega en LinkedIn)
 - [ ] Derivar el perfil de GitHub desde el documento maestro
 
 ## Pendiente de confirmar con Jose
 
 - [ ] Año del trabajo de verano
-- [ ] URL de LinkedIn
+- [x] URL de LinkedIn
 - [ ] Fotos del build y motivación
 - [ ] Industria de la empresa para el texto público
 - [ ] Estado de uso de algunos proyectos y el motivo de los prototipos

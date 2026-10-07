@@ -21,7 +21,7 @@ Sesiones anteriores: tema `glass` (Plan C), diagramas como datos, títulos corto
 
 ## Próximos pasos inmediatos
 
-- Derivar LinkedIn desde el documento maestro; luego el perfil de GitHub.
+- Jose pega el texto de LinkedIn (nota `LinkedIn.md` del vault). Siguiente: perfil de GitHub.
 - Después: LinkedIn y perfil de GitHub desde el documento maestro.
 - Probar en Safari/iPhone y Firefox reales (solo Jose).
 - Resolver los pendientes de confirmar con Jose (ver `docs/TODO.md`).
