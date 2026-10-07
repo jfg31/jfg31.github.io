@@ -18,11 +18,13 @@
   },
   "dependencies": {
     "astro": "^7.3.5",
+    "docx": "^9.9.0",
     "marked": "^18.0.14"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "gray-matter": "^4.0.3",
+    "jszip": "^3.10.2",
     "typescript": "^6.0.3",
     "vitest": "^5.0.3"
   }
