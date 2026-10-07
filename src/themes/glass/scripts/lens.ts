@@ -6,7 +6,8 @@
 // - El brillo del borde sigue al puntero; al moverse la lente se estira como un gel.
 // - Las posiciones salen de los <g data-step> que genera Diagram.astro, no de datos fijos.
 // - Teclado: la <figure> es enfocable; ←/→ (e Inicio/Fin) mueven la lente de paso en paso.
-// - prefers-reduced-motion: sin recorrido ni gel; la lente queda fija en el primer paso.
+// - El paso bajo la lente resalta su fila en la lista visible (.is-on + aria-current="step"), sin mover el layout.
+// - prefers-reduced-motion: sin gel; la lente queda fija en el primer paso.
 // Mejora progresiva: sin JS no se ejecuta nada y la lista de pasos queda visible.
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -393,13 +394,6 @@ class Lens {
   }
 }
 
-/* ---------------- recorrido automático del hero ---------------- */
-const TOUR_START_MS = 300; // espera tras entrar en pantalla
-const TOUR_REVEAL_MS = 700; // la lente se materializa sobre el primer paso
-const TOUR_HOP_MS = 1500; // tiempo máximo por paso
-const TOUR_SETTLE_MS = 600; // el último salto se asienta
-const TOUR_MAX_MS = 5000;
-
 /* ---------------- un diagrama: elige el SVG visible, monta la lente y conecta puntero y teclado ---------------- */
 const io =
   'IntersectionObserver' in window
@@ -423,22 +417,18 @@ const stages = new WeakMap<Element, Stage>();
 
 class Stage {
   readonly fig: HTMLElement;
-  readonly cap: HTMLElement | null;
-  readonly details: string[];
+  readonly rows: HTMLElement[];
   readonly refract: boolean;
   lens: Lens | null = null;
   svg: SVGSVGElement | null = null;
   visible = true;
   private flowMax = 0;
   private revealed = false;
-  private touring = false;
-  private tourTimers: number[] = [];
 
   constructor(fig: HTMLElement, refract: boolean) {
     this.fig = fig;
     this.refract = refract;
-    this.cap = fig.querySelector<HTMLElement>('[data-cap]');
-    this.details = Array.from(fig.querySelectorAll('.diagram-steps > li > span')).map((s) => s.textContent?.trim() ?? '');
+    this.rows = Array.from(fig.querySelectorAll<HTMLElement>('.diagram-steps > li'));
     stages.set(fig, this);
     // solo con la lente la figura es interactiva: entonces entra en el orden de tabulación y lleva la pista
     fig.tabIndex = 0;
@@ -449,7 +439,6 @@ class Stage {
     if ('ResizeObserver' in window) new ResizeObserver(() => this.build()).observe(fig);
     if (io) io.observe(fig);
     else this.reveal();
-    if (fig.hasAttribute('data-tour')) this.setupTour();
   }
 
   /** SVG que el CSS muestra ahora mismo (fila o columna). */
@@ -483,9 +472,7 @@ class Stage {
       mag: horizontal ? 1.12 : 1.08,
       refract: this.refract,
       start,
-      onStep: (i) => {
-        if (this.cap) this.cap.textContent = this.details[i] ?? '';
-      },
+      onStep: (i) => this.mark(i),
       onMove: (l) => this.fillFlow(l),
     });
     this.lens.visible = this.visible;
@@ -498,13 +485,22 @@ class Stage {
   /** Primera vez en pantalla: la lente se materializa sobre el primer paso (o queda fija sin movimiento). */
   reveal(): void {
     if (this.revealed || !this.lens) return;
-    if (this.fig.hasAttribute('data-tour') && motion) return; // el recorrido se encarga (setupTour)
     this.revealed = true;
     if (!motion) {
       this.flowMax = 1;
       this.lens.mat = 1;
     }
     this.lens.toStep(this.lens.cur >= 0 ? this.lens.cur : 0, true);
+  }
+
+  /** Resalta la fila de la lista que corresponde al paso bajo la lente. */
+  private mark(i: number): void {
+    this.rows.forEach((row, k) => {
+      const on = k === i;
+      row.classList.toggle('is-on', on);
+      if (on) row.setAttribute('aria-current', 'step');
+      else row.removeAttribute('aria-current');
+    });
   }
 
   /** La línea coral se llena hasta donde ha llegado la lente (nunca retrocede). */
@@ -530,7 +526,6 @@ class Stage {
 
   private user(): void {
     this.revealed = true;
-    if (this.touring) this.endTour();
   }
 
   private bind(): void {
@@ -572,52 +567,6 @@ class Stage {
       // teclado: la lente salta al paso sin viaje (las flechas se repiten; la animación las haría sentir lentas)
       this.lens.toStep(next, true);
     });
-  }
-
-  /* ----- recorrido del hero: la lente pasa por cada paso una vez, cuando el diagrama está a la vista ----- */
-  private setupTour(): void {
-    if (!motion) return;
-    const start = (): void => {
-      if (this.revealed || !this.lens) return;
-      this.revealed = true;
-      this.touring = true;
-      // durante el recorrido automático el pie no se anuncia (evita leer cinco pasos seguidos sin pedirlo)
-      this.cap?.setAttribute('aria-live', 'off');
-      // Todo el recorrido cabe en TOUR_MAX_MS (≤ 5 s, WCAG 2.2.2: movimiento automático sin control de pausa).
-      // Con pocos pasos cada salto dura hasta 1,5 s; con más pasos se acortan para no pasar del límite.
-      const count = this.lens.nodes.length;
-      const hop = Math.min(TOUR_HOP_MS, Math.floor((TOUR_MAX_MS - TOUR_START_MS - TOUR_REVEAL_MS - TOUR_SETTLE_MS) / Math.max(1, count - 1)));
-      this.tourTimers.push(
-        window.setTimeout(() => {
-          if (!this.lens) return;
-          this.lens.mat = 0;
-          this.lens.toStep(0, true);
-        }, TOUR_START_MS),
-      );
-      for (let i = 1; i < count; i++) {
-        this.tourTimers.push(window.setTimeout(() => this.touring && this.lens?.toStep(i), TOUR_START_MS + TOUR_REVEAL_MS + (i - 1) * hop));
-      }
-      this.tourTimers.push(window.setTimeout(() => this.endTour(), TOUR_START_MS + TOUR_REVEAL_MS + (count - 1) * hop + TOUR_SETTLE_MS));
-    };
-    if ('IntersectionObserver' in window) {
-      const tio = new IntersectionObserver(
-        (es) => {
-          if (es.some((e) => e.isIntersecting)) {
-            tio.disconnect();
-            start();
-          }
-        },
-        { threshold: 0.45 },
-      );
-      tio.observe(this.fig);
-    } else start();
-  }
-
-  private endTour(): void {
-    this.touring = false;
-    this.tourTimers.forEach((t) => clearTimeout(t));
-    this.tourTimers = [];
-    this.cap?.setAttribute('aria-live', 'polite');
   }
 }
 

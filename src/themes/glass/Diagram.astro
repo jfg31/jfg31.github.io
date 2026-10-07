@@ -1,9 +1,11 @@
 ---
 // Diagrama de pasos con lente de vidrio (tema glass). Los datos vienen del contrato (DiagramStep[]).
-// - <ol class="diagram-steps">: siempre en el DOM; es la versión sin JS y la que leen los lectores de pantalla.
 // - Dos SVG decorativos (aria-hidden): fila en escritorio y columna en móvil; el CSS muestra uno según el ancho.
-// - scripts/lens.ts lee las posiciones de los <g data-step> generados aquí y monta la lente encima;
-//   también hace la figura enfocable (tabindex) y la describe con la pista: sin JS no hay parada de tabulación muerta.
+// - <ol class="diagram-steps">: debajo del dibujo, siempre visible y con todos los pasos (número, etiqueta y detalle);
+//   es lo que se lee, con o sin JS, y lo que leen los lectores de pantalla.
+// - scripts/lens.ts lee las posiciones de los <g data-step> generados aquí y monta la lente encima; el paso bajo la
+//   lente resalta su fila de la lista. También hace la figura enfocable (tabindex) y la describe con la pista:
+//   sin JS no hay parada de tabulación muerta.
 import type { DiagramStep } from '../contract';
 import { layoutSteps, layoutStepsVertical, wrapLabel, type Box } from './scripts/layout';
 import { FONT, VIEW_H, VIEW_V, maxLineChars } from '../../../scripts/lib/diagram-limits.mjs';
@@ -13,11 +15,9 @@ interface Props {
   title: string;
   hint: string;
   id: string;
-  /** Recorrido automático de la lente al entrar en pantalla (solo el diagrama del hero). */
-  tour?: boolean;
 }
 
-const { steps, title, hint, id, tour = false } = Astro.props;
+const { steps, title, hint, id } = Astro.props;
 
 const LINE = 20;
 
@@ -58,7 +58,6 @@ const hintId = `${id}-hint`;
   class="diagram"
   id={id}
   data-diagram
-  data-tour={tour ? '' : undefined}
   aria-labelledby={titleId}
 >
   <p class="diagram-title mono" id={titleId}>{title}</p>
@@ -94,16 +93,15 @@ const hintId = `${id}-hint`;
       </svg>
     ))}
   </div>
+  <p class="caption">
+    <span class="tick" aria-hidden="true"></span>
+    <span class="hint" id={hintId}>{hint}</span>
+  </p>
   <ol class="diagram-steps">
     {steps.map((s) => (
       <li><strong>{s.label}</strong> <span>{s.detail}</span></li>
     ))}
   </ol>
-  <figcaption class="caption">
-    <span class="tick" aria-hidden="true"></span>
-    <span class="cap" data-cap aria-live="polite"></span>
-    <span class="hint" id={hintId}>{hint}</span>
-  </figcaption>
 </figure>
 
 <script>
@@ -130,59 +128,57 @@ const hintId = `${id}-hint`;
     .diagram .dg-v { display: block; max-width: 420px; margin-inline: auto; }
   }
 
-  /* sin JS no hay lente: se oculta el lienzo y queda la lista con todos los pasos */
+  /* sin JS no hay lente: se oculta el lienzo (y su pista) y queda la lista con todos los pasos */
   html:not(.js) .diagram .stage, html:not(.js) .diagram .caption { display: none; }
-  /* con JS la lista sigue en el árbol de accesibilidad, solo se oculta a la vista */
-  .js .diagram .diagram-steps {
-    position: absolute !important;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-  .diagram-steps { counter-reset: dstep; border-top: 1px solid var(--rule); }
-  .diagram-steps li {
-    counter-increment: dstep;
-    display: grid;
-    grid-template-columns: 2.5em 1fr;
-    gap: 2px 12px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--rule);
-    color: var(--ink-2);
-  }
-  .diagram-steps li::before {
-    content: counter(dstep, decimal-leading-zero);
-    grid-row: span 2;
-    font-family: var(--mono);
-    font-size: var(--label);
-    color: var(--accent-ink);
-    padding-top: .3em;
-  }
-  .diagram-steps strong { color: var(--ink); font-weight: 600; }
 
   .diagram .caption {
     display: flex;
     gap: 10px;
     align-items: baseline;
     margin-top: 14px;
-    min-height: 26px;
-    font-size: 16px;
-    color: var(--ink-2);
+    font-size: 15px;
+    color: var(--ink-3);
   }
   .diagram .caption .tick { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; transform: translateY(-1px); }
-  /* la pista se ve hasta que la lente pone el primer detalle; sigue describiendo la figura para lectores de pantalla */
-  .diagram .cap:empty { display: none; }
-  .diagram .cap:not(:empty) + .hint {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    white-space: nowrap;
+
+  /* lista de pasos: una columna en contenedores estrechos, dos a partir de 720 px */
+  .diagram-steps {
+    counter-reset: dstep;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 28px;
+    margin-top: 20px;
   }
+  @container (min-width: 720px) {
+    .diagram-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .diagram-steps li {
+    counter-increment: dstep;
+    display: grid;
+    grid-template-columns: 2.25em minmax(0, 1fr);
+    align-content: start;
+    gap: 4px 12px;
+    padding: 14px 12px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-2);
+    font-size: 16px;
+    line-height: 1.5;
+    transition: background-color var(--t-hover) ease;
+  }
+  .diagram-steps li::before {
+    content: counter(dstep, decimal-leading-zero);
+    grid-row: span 2;
+    font-family: var(--mono);
+    font-size: var(--label);
+    line-height: 1.85;
+    color: var(--ink-3);
+    transition: color var(--t-hover) ease;
+  }
+  .diagram-steps strong { color: var(--ink); font-weight: 560; }
+  .diagram-steps span { text-wrap: pretty; }
+  /* paso bajo la lente: solo cambian colores, nunca el tamaño (la lista no se mueve) */
+  .diagram-steps li.is-on { background: var(--accent-wash); border-top-color: var(--accent); }
+  .diagram-steps li.is-on::before { color: var(--accent-ink); }
 
   /* vocabulario del diagrama (SVG) */
   .dg .dot { fill: var(--dot); }
