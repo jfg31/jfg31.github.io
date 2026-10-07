@@ -24,7 +24,6 @@ const fullTitle = title ? `${title} · ${profile.name}` : ui.siteTitle;
 const page = subpath.split('/')[0] ?? '';
 const siteHost = Astro.site?.host ?? profile.name;
 const year = profile.updated.slice(0, 4);
-const pipeline = ui.sitePipeline.map((s) => s.label).join(' → ');
 const pages = [
   { key: '', label: ui.nav.home },
   { key: 'projects', label: ui.nav.projects },
@@ -106,7 +105,6 @@ const pages = [
           {profile.linkedin && <a class="glass btn" href={profile.linkedin}>LinkedIn</a>}
         </div>
         <div class="foot mono">
-          <span>{ui.sitePipelineTitle}: {pipeline}</span>
           <ul>
             {pages.map((p) => (
               <li><a href={localePath(locale, p.key)} aria-current={p.key === page ? 'page' : undefined}>{p.label}</a></li>

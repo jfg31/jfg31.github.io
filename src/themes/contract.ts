@@ -63,8 +63,6 @@ export interface UiStrings {
   categories: Record<Category, string>;
   statuses: Record<Status, string>;
   profileSections: { about: string; education: string; experience: string; certifications: string; hardware: string };
-  sitePipelineTitle: string;
-  sitePipeline: DiagramStep[];
   lensHint: string;
   theme: { label: string; light: string; dark: string; system: string; switchTo: string };
   language: string;

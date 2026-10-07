@@ -104,8 +104,6 @@ Dentro de la sección pública de cada idioma, una subsección `###` con una lis
 - Si existe en un idioma, debe existir en el otro, y los dos con el mismo número de pasos.
 - Sin la subsección en ningún idioma, el caso simplemente no tiene diagrama (la página del caso usa filas etiqueta | texto).
 
-La línea "cómo se hace este sitio" del pie de página no viene de un caso: son las etiquetas de `ui.sitePipeline` en `src/i18n/ui.ts`, validadas con las mismas reglas.
-
 ## Título corto (opcional)
 
 Un caso puede llevar un título corto para las pastillas del inicio y las pestañas de trabajo destacado. En el vault es una subsección más de cada sección pública, justo después del título:
