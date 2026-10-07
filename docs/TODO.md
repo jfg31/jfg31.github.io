@@ -13,8 +13,8 @@ Checklist accionable de tareas pendientes. Este archivo debe quedar vacío (todo
 - [x] (Solo Jose) Revisar y fusionar `feat/hero-projects`, luego publicar (hecho, en vivo)
 - [ ] (Solo Jose) Probar el tema `glass` en Safari/iPhone y Firefox reales (respaldo sin refracción solo simulado en Chromium)
 - [ ] Dominio propio
-- [x] Derivar el resume desde el documento maestro (rama `feat/resume`, pendiente de revisión y push)
-- [ ] (Solo Jose) Revisar el texto de los resumes y dar teléfono/ciudad para la versión privada
+- [x] Derivar el resume desde el documento maestro (publicado 2026-10-06)
+- [x] (Solo Jose) Revisar el texto de los resumes y dar teléfono/ciudad para la versión privada
 - [ ] Derivar LinkedIn desde el documento maestro
 - [ ] Derivar el perfil de GitHub desde el documento maestro
 

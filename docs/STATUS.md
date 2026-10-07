@@ -6,11 +6,11 @@
 
 ## En qué paso está
 
-Sitio publicado en https://jfg31.github.io con el tema `glass` ("Liquid Glass"), incluido el hero con pastillas de proyectos destacados (fusionado y en vivo). El resume (Plan D) está implementado en la rama `feat/resume`, pendiente de que Jose revise el texto y de publicar (push).
+Sitio publicado en https://jfg31.github.io con el tema `glass` ("Liquid Glass"), incluido el hero con pastillas de proyectos destacados (fusionado y en vivo). El resume (Plan D) está publicado (2026-10-06): `/en/resume/ai/`, `/en/resume/fullstack/`, `/es/resume/ia/`, `/es/resume/fullstack/`, con PDF y DOCX en `/resume/`.
 
 ## Qué se hizo en la última sesión
 
-Resume (Plan D), rama `feat/resume`:
+Resume (Plan D), publicado:
 
 - 4 versiones de 1 página: Automatización e IA y Full-Stack, en EN y ES, derivadas de `Resume.md` en el cerebro (`pnpm export` → `content/resume.json`).
 - Página web por versión (`/<lang>/resume/<ia|ai|fullstack>/`), independiente del tema, con descarga en PDF (Chromium; la regla de 1 página rompe el build) y DOCX.
@@ -21,7 +21,7 @@ Sesiones anteriores: tema `glass` (Plan C), diagramas como datos, títulos corto
 
 ## Próximos pasos inmediatos
 
-- Jose revisa el texto de los resumes y da teléfono/ciudad para la versión privada; luego `pnpm release:check` y push.
+- Derivar LinkedIn desde el documento maestro; luego el perfil de GitHub.
 - Después: LinkedIn y perfil de GitHub desde el documento maestro.
 - Probar en Safari/iPhone y Firefox reales (solo Jose).
 - Resolver los pendientes de confirmar con Jose (ver `docs/TODO.md`).
