@@ -14,7 +14,8 @@
     "export": "node --env-file-if-exists=.env.local scripts/export.mjs",
     "lint:privacy": "node --env-file-if-exists=.env.local scripts/privacy-lint.mjs",
     "check": "astro check",
-    "release:check": "pnpm export && pnpm lint:privacy && pnpm test && pnpm check && pnpm build"
+    "release:check": "pnpm export && pnpm lint:privacy && pnpm test && pnpm check && pnpm build",
+    "resume:private": "pnpm build && node --env-file-if-exists=.env.local scripts/resume-private.mjs"
   },
   "dependencies": {
     "astro": "^7.3.5",
