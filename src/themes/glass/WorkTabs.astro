@@ -103,14 +103,30 @@ const { locale, ui, items, total } = Astro.props;
       p.setAttribute('aria-labelledby', t.id);
     });
 
+    const tabFor = (hash: string): HTMLButtonElement | undefined => tabs.find((t) => `#${t.dataset.panel}` === hash);
+
+    // #work-<slug> solo describe la página mientras #work está a la vista: al salir se quita (sin tocar el scroll-spy,
+    // que no usa el hash). Sin entradas nuevas en el historial ni saltos: siempre replaceState.
+    let inView = false;
+    function setHash(hash: string): void {
+      if (location.hash !== hash) history.replaceState(history.state, '', hash || location.pathname + location.search);
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((es) => {
+        const now = es[es.length - 1].isIntersecting;
+        if (inView && !now && tabFor(location.hash)) setHash('');
+        inView = now;
+      }).observe(root);
+    }
+
     function placeDrop(animate: boolean): void {
       if (drop) gelMove(drop, list as HTMLElement, current, animate, prefersMotion());
     }
 
     function select(tab: HTMLButtonElement, focus: boolean): void {
       current = tab;
-      // el enlace a este trabajo (#work-<slug>) sigue a la pestaña, sin entrada nueva en el historial ni salto
-      history.replaceState(history.state, '', `#${tab.dataset.panel}`);
+      // el enlace a este trabajo (#work-<slug>) sigue a la pestaña elegida mientras #work está a la vista
+      if (inView) setHash(`#${tab.dataset.panel}`);
       for (const t of tabs) {
         const on = t === tab;
         t.setAttribute('aria-selected', on ? 'true' : 'false');
@@ -124,11 +140,10 @@ const { locale, ui, items, total } = Astro.props;
       placeDrop(!focus);
     }
 
-    const tabFor = (hash: string): HTMLButtonElement | undefined => tabs.find((t) => `#${t.dataset.panel}` === hash);
-
     // Pastilla del hero o enlace #work-<slug>: abre esa pestaña, desplaza hasta #work y le pasa el foco.
     function open(tab: HTMLButtonElement): void {
       select(tab, false);
+      setHash(`#${tab.dataset.panel}`);
       root.scrollIntoView({ behavior: prefersMotion() ? 'smooth' : 'instant', block: 'start' });
       tab.focus({ preventScroll: true });
     }
