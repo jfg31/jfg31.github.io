@@ -4,12 +4,13 @@
 
 ```
 Cerebro (privado)                     Repo del sitio (público)
-Casos/*.md + Perfil.md
+Casos/*.md + Perfil.md + Resume.md
       │
       ▼
-scripts/export.mjs ──► content/profile.json, content/cases/*.json
+scripts/export.mjs ──► content/profile.json, content/cases/*.json, content/resume.json
   · solo casos con publico: true
   · solo frontmatter seguro + secciones públicas ES/EN
+  · Resume.md: solo las secciones públicas ES/EN (nunca "## Privado")
       │
       ▼
 scripts/privacy-lint.mjs ──► falla si encuentra datos sensibles
@@ -18,10 +19,15 @@ scripts/privacy-lint.mjs ──► falla si encuentra datos sensibles
       │
       ▼
 astro build ──► dist/ ──► GitHub Pages
+      │
+      ▼ (post-build, dentro de `pnpm build`)
+resume-docx.mjs + resume-pdf.mjs ──► dist/resume/*.docx, *.pdf
+scripts/check-contract.mjs ──► verifica páginas, casos y archivos del resume
 ```
 
 - `export.mjs` y `privacy-lint.mjs` corren **localmente** (la máquina de desarrollo tiene acceso al cerebro). El repo público solo recibe `content/*.json` ya filtrado.
 - El linter revisa **todo el repo** (archivos versionados y no ignorados, incluido `docs/`). Localmente usa patrones genéricos + lista privada; en CI (`CI=true`) solo patrones genéricos, enmascarando coincidencias en el log. El hook `.githooks/pre-push` lo corre antes de cada push.
+- `pnpm build` necesita Chromium (`playwright-core`) para imprimir los PDF del resume: `pnpm exec playwright-core install chromium` (el deploy en CI lo instala).
 - Antes de publicar por primera vez se revisa también todo el historial de git (`git log -p --all | pnpm lint:privacy --stdin`).
 
 ## Estructura de carpetas
@@ -30,13 +36,15 @@ astro build ──► dist/ ──► GitHub Pages
 portfolio-site/
 ├── content/              ← DATA generada por `pnpm export`, nunca se edita a mano
 │   ├── profile.json
+│   ├── resume.json
 │   └── cases/*.json
-├── scripts/              ← export, linter de privacidad, verificador de contrato
+├── scripts/              ← export, linter de privacidad, verificador de contrato, generadores DOCX/PDF del resume
 │   └── lib/              ← parsers y utilidades (cli.mjs expone isMain: guarda de CLI segura con symlinks/junctions)
 ├── src/
 │   ├── i18n/ui.ts        ← textos de interfaz EN/ES
-│   ├── lib/              ← carga de data, filtrado, orden por "destacado", markdown
-│   ├── pages/[lang]/     ← rutas; solo pasan data al tema, sin presentación
+│   ├── lib/              ← carga de data, filtrado, orden por "destacado", markdown, resume
+│   ├── pages/[lang]/     ← rutas; solo pasan data al tema, sin presentación (incluye resume/[variant])
+│   ├── resume/           ← ResumeDocument.astro + resume.css: página del resume, independiente del tema
 │   └── themes/
 │       ├── contract.ts   ← tipos del contrato data ↔ tema (Profile, Case, DiagramStep, UiStrings, props de página)
 │       ├── base/         ← tema mínimo funcional (HomePage, ProjectsPage, CasePage, AboutPage, tokens.css)
@@ -123,6 +131,85 @@ Local AI assistant
 ```
 
 Reglas (las aplica `scripts/lib/case.mjs`; si falla, el export se detiene con el archivo y el motivo): texto plano en una línea (sin markdown ni etiquetas), no vacío, de 24 caracteres como máximo; si existe en un idioma, debe existir en el otro. Se guarda como `text[locale].shortTitle` y se omite si no existe. El tema glass usa `shortTitleOf(item, locale)` (`scripts/text.ts`): el título corto o, si falta, el título completo.
+
+## Resume
+
+Cuatro resumes de 1 página: dos versiones (`ai` = Automatización e IA, `fullstack`) en dos idiomas.
+
+### Flujo
+
+```
+Resume.md (cerebro) ──pnpm export──► content/resume.json
+   ──astro build──► /<lang>/resume/<ia|ai|fullstack>/   (HTML; también es la fuente del PDF)
+   ──post-build──► scripts/resume-docx.mjs → dist/resume/*.docx
+                   scripts/resume-pdf.mjs  → dist/resume/*.pdf (Chromium imprime la página servida con astro preview)
+   ──────────────► scripts/check-contract.mjs (páginas, enlaces y archivos presentes)
+```
+
+URLs: `en/resume/ai`, `en/resume/fullstack`, `es/resume/ia`, `es/resume/fullstack`. `src/lib/resume.ts` carga el JSON y `src/pages/[lang]/resume/[variant].astro` solo pasa data a `src/resume/ResumeDocument.astro`.
+
+### Formato en el vault (`Resume.md`)
+
+Frontmatter con `actualizado` y dos secciones públicas (`## Versión pública (ES)` y `## Public version (EN)`) con las mismas subsecciones `###`. Ejemplo mínimo con texto ficticio (la sección EN; la ES usa Título, Resumen, Habilidades, Experiencia, Proyectos, Educación, Certificaciones):
+
+```markdown
+---
+actualizado: 2026-10-06
+---
+## Public version (EN)
+### Title [ia]
+Automation & AI Engineer
+### Title [fullstack]
+Full-Stack Engineer
+### Summary [ia]
+Builds automations and local AI tools for Acme.
+### Summary [fullstack]
+Builds web apps end to end for Acme.
+### Skills
+- [ia] **Automation:** n8n, Python
+- [ia, fullstack] **Web:** TypeScript, Astro
+### Experience
+Engineer | Acme | 2024 – Present
+- [ia] Automated a reporting flow for Acme.
+- [fullstack] Shipped an internal dashboard for Acme.
+- [ia, fullstack] Reduced manual work with scripts.
+### Projects
+- [ia] **Doc assistant** (example-slug) — Local AI over documents.
+### Education
+BSc Computer Science | Example University | 2024
+### Certifications
+Example Certificate | Example Issuer | 2025
+## Privado
+- Teléfono: …
+- Ciudad: …
+```
+
+### Etiquetas
+
+Cada ítem de habilidades, bullet de experiencia y proyecto empieza con `- [ia]`, `- [fullstack]` o `- [ia, fullstack]` (en ambos idiomas). Título y resumen llevan la etiqueta en el encabezado (`### Title [ia]`). La línea de experiencia (puesto | empresa | fechas), la educación y las certificaciones son comunes a las dos versiones.
+
+### Reglas y límites (las aplica `scripts/lib/resume.mjs`; si falla, el export se detiene con el archivo y el motivo)
+
+- Experiencia: 3 a 5 bullets por versión. Proyectos: 2 a 3. Habilidades: 3 a 4 grupos.
+- Bullet (experiencia, proyecto, habilidades) ≤ 220 caracteres; resumen ≤ 400; título ≤ 60; campos de las líneas `a | b | c` ≤ 120. Todo texto plano (sin markdown ni etiquetas) y sin wikilinks.
+- ES y EN deben tener el mismo número de bullets, proyectos, grupos de habilidades, líneas de educación y certificaciones.
+- El `slug` de cada proyecto debe ser un caso público y el mismo, en la misma posición, en ES y EN.
+
+### Archivos generados
+
+`dist/resume/JoseFlores-Resume-<AI|FullStack>-<EN|ES>.pdf` y `.docx` (nombres de `resumeFileBase` en `scripts/lib/resume-meta.mjs`). Cada página del resume enlaza a su PDF y DOCX, y "sobre mí" enlaza a las cuatro versiones.
+
+### Regla de 1 página
+
+`resume-pdf.mjs` imprime cada página (tamaño según `@page`) y verifica con `unpdf` que el PDF tenga exactamente 1 página y que el texto extraído contenga el nombre y el título. Si no cabe, **el build falla**: acortar bullets en `Resume.md`.
+
+### Independiente del tema
+
+La página vive en `src/resume/` y no usa `@theme` ni los tokens de ningún tema: cambiar de tema no altera los resumes. Las etiquetas de interfaz (secciones, botones, nombres de versión) están en `RESUME_LABELS` (`scripts/lib/resume-meta.mjs`), compartidas por la página y el DOCX.
+
+### Versión privada
+
+`pnpm resume:private` (corre `pnpm build` y luego `scripts/resume-private.mjs`) lee `## Privado` de `Resume.md` (teléfono y ciudad), inyecta esos datos en la línea de contacto del DOM justo antes de imprimir el PDF y en el DOCX, y escribe los archivos `*-privado` en `"<PORTFOLIO_DIR>/Resume - archivos/"`. Rechaza cualquier salida dentro del repo. `## Privado` nunca se exporta (`parseResume` no lo lee): los resumes públicos solo muestran "Puerto Rico".
 
 ## Tema glass ("Liquid Glass")
 
