@@ -27,9 +27,9 @@ Lee, en este orden, todos los archivos en `docs/`:
 - `pnpm lint:privacy` — busca datos sensibles en todo el repo (bloquea el push vía `.githooks/pre-push`)
 - `pnpm test` — tests (Vitest)
 - `pnpm dev` — servidor local en :4321
-- `pnpm build` — build + verificación de contrato de tema
+- `pnpm build` — build + DOCX/PDF del resume (Chromium) + verificación de contrato
 - `pnpm release:check` — todo lo anterior en orden, antes de publicar
-- Primer setup en una máquina nueva: `pnpm install && git config core.hooksPath .githooks && cp .env.example .env.local`
+- Primer setup en una máquina nueva: `pnpm install && pnpm exec playwright-core install chromium && git config core.hooksPath .githooks && cp .env.example .env.local`
 
 ## Estructura
 
