@@ -1,6 +1,6 @@
 import matter from 'gray-matter';
 import { extractSection, extractSubsections } from './sections.mjs';
-import { readDiagram } from './diagram.mjs';
+import { MARKDOWN, readDiagram } from './diagram.mjs';
 
 export const CATEGORIES = ['automatizacion', 'infraestructura', 'producto', 'clientes', 'herramientas-ia', 'hardware'];
 export const STATUSES = ['activo', 'live', 'prototipo', 'completado'];
@@ -9,6 +9,10 @@ const CASE_SECTIONS = {
   es: { heading: 'Versión pública (ES)', map: { 'Título': 'title', 'Resumen': 'summary', 'Problema': 'problem', 'Solución': 'solution', 'Resultado': 'outcome' } },
   en: { heading: 'Public version (EN)', map: { Title: 'title', Summary: 'summary', Problem: 'problem', Solution: 'solution', Outcome: 'outcome' } },
 };
+
+// Título corto (opcional): subsección de cada sección pública; lo usan las pastillas del hero y las pestañas.
+const SHORT_TITLE = { es: 'Título corto', en: 'Short title' };
+const MAX_SHORT_TITLE = 24;
 
 const PROFILE_SECTIONS = {
   es: { heading: 'Versión pública (ES)', map: { Titular: 'headline', 'Sobre mí': 'about', 'Educación': 'education', Experiencia: 'experience', Certificaciones: 'certifications', Hardware: 'hardware' } },
@@ -39,6 +43,22 @@ function readLocalized(content, spec, file) {
     }
   }
   return text;
+}
+
+function readShortTitles(content, file) {
+  const found = {};
+  for (const [locale, { heading }] of Object.entries(CASE_SECTIONS)) {
+    const name = SHORT_TITLE[locale];
+    const value = extractSubsections(extractSection(content, heading), [name])[name];
+    if (value === null) continue;
+    if (!value) fail(file, `"### ${name}" vacío en "## ${heading}"`);
+    if (value.length > MAX_SHORT_TITLE) fail(file, `"### ${name}" tiene > ${MAX_SHORT_TITLE} caracteres: «${value}»`);
+    if (value.includes('\n') || MARKDOWN.test(value)) fail(file, `"### ${name}" debe ser texto plano en una línea: «${value}»`);
+    found[locale] = value;
+  }
+  const keys = Object.keys(found);
+  if (keys.length === 1) fail(file, `el título corto debe existir en ambos idiomas (falta ${keys[0] === 'es' ? 'EN' : 'ES'})`);
+  return keys.length === 0 ? null : found;
 }
 
 function readLinks(enlaces, file) {
@@ -72,6 +92,8 @@ export function parseCase(markdown, file) {
     updated: toDateString(data.actualizado, file, 'actualizado'),
     text: readLocalized(content, CASE_SECTIONS, file),
   };
+  const shortTitles = readShortTitles(content, file);
+  if (shortTitles) for (const locale of Object.keys(shortTitles)) result.text[locale].shortTitle = shortTitles[locale];
   const diagram = readDiagram(content, file);
   if (diagram) result.diagram = diagram;
   return result;

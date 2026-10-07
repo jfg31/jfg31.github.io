@@ -9,7 +9,15 @@ export const CATEGORY_ORDER: Category[] = ['automatizacion', 'infraestructura', 
 export const STATUSES = ['activo', 'live', 'prototipo', 'completado'] as const;
 export type Status = (typeof STATUSES)[number];
 
-export interface CaseText { title: string; summary: string; problem: string; solution: string; outcome: string }
+export interface CaseText {
+  title: string;
+  /** Título corto opcional (≤ 24 caracteres, texto plano) para pastillas y pestañas; si falta, los temas usan `title`. */
+  shortTitle?: string;
+  summary: string;
+  problem: string;
+  solution: string;
+  outcome: string;
+}
 
 export interface DiagramStep { label: string; detail: string }
 

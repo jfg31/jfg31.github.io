@@ -13,7 +13,7 @@ function fail(file, where, message) {
 }
 
 // Sintaxis markdown que el tema mostraría literal: el detalle es texto plano (spec §9.2).
-const MARKDOWN = /[*_`<]|\[[^\]]*\]\(|^#/;
+export const MARKDOWN = /[*_`<]|\[[^\]]*\]\(|^#/;
 
 /** Valida pasos ya leídos ({label, detail}) con las mismas reglas que un diagrama de caso. */
 export function validateSteps(steps, file, where) {

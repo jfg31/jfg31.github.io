@@ -116,6 +116,53 @@ describe('parseCase', () => {
   });
 });
 
+describe('parseCase: título corto', () => {
+  const withShort = (es, en) =>
+    publicSections
+      .replace('### Título\nAsistente IA', es === null ? '### Título\nAsistente IA' : `### Título\nAsistente IA\n### Título corto\n${es}`)
+      .replace('### Title\nAI Assistant', en === null ? '### Title\nAI Assistant' : `### Title\nAI Assistant\n### Short title\n${en}`);
+
+  it('lo lee en ambos idiomas sin alterar el título', () => {
+    const c = parseCase(caseMd(validFront, withShort('Asistente local', 'Local assistant')), 'a.md');
+    expect(c.text.es.shortTitle).toBe('Asistente local');
+    expect(c.text.en.shortTitle).toBe('Local assistant');
+    expect(c.text.es.title).toBe('Asistente IA');
+    expect(c.text.en.title).toBe('AI Assistant');
+  });
+
+  it('acepta exactamente 24 caracteres', () => {
+    const c = parseCase(caseMd(validFront, withShort('x'.repeat(24), 'y'.repeat(24))), 'a.md');
+    expect(c.text.en.shortTitle).toHaveLength(24);
+  });
+
+  it('se omite cuando no existe', () => {
+    const c = parseCase(caseMd(validFront), 'a.md');
+    expect(c.text.es).not.toHaveProperty('shortTitle');
+    expect(c.text.en).not.toHaveProperty('shortTitle');
+  });
+
+  it.each([
+    ['falta EN', withShort('Asistente local', null)],
+    ['falta ES', withShort(null, 'Local assistant')],
+  ])('lanza si solo existe en un idioma (%s)', (msg, body) => {
+    expect(() => parseCase(caseMd(validFront, body), 'a.md')).toThrow(msg);
+  });
+
+  it.each([
+    ['vacío', withShort('', 'Local assistant')],
+    ['> 24 caracteres', withShort('Asistente local', 'z'.repeat(25))],
+    ['texto plano', withShort('**Asistente**', 'Local assistant')],
+    ['texto plano', withShort('Asistente local', '[Local](https://x.io)')],
+    ['texto plano', withShort('Asistente\nlocal', 'Local assistant')],
+  ])('lanza error: %s', (msg, body) => {
+    expect(() => parseCase(caseMd(validFront, body), 'a.md')).toThrow(msg);
+  });
+
+  it('incluye archivo y subsección en el error', () => {
+    expect(() => parseCase(caseMd(validFront, withShort('Asistente local', 'z'.repeat(25))), 'Caso.md')).toThrow('Caso.md: "### Short title"');
+  });
+});
+
 const profileMd = (front) => `---\n${front}\n---\n# Perfil\n## Educación\nprivado\n
 ## Versión pública (ES)
 ### Titular
