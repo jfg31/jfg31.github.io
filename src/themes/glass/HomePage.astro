@@ -1,14 +1,14 @@
 ---
 // Inicio del tema glass (portado de E-liquid-glass: hero, trabajo destacado, índice; el contacto vive en el footer del Layout).
+// Las pastillas del hero son anclas #work-<slug>: sin JS llevan al panel del caso; con JS WorkTabs abre su pestaña.
 import Layout from './Layout.astro';
-import Diagram from './Diagram.astro';
 import WorkTabs from './WorkTabs.astro';
 import ProjectIndex from './ProjectIndex.astro';
 import type { ThemeProps } from '../contract';
 import { featuredCases } from '../../lib/cases';
 import { md } from '../../lib/markdown';
 import { localePath } from '../../i18n/ui';
-import { currentRole, pad2, splitHeadline } from './scripts/text';
+import { currentRole, pad2, shortTitleOf, splitHeadline } from './scripts/text';
 
 type Props = ThemeProps;
 const { locale, ui, profile, cases } = Astro.props;
@@ -35,9 +35,22 @@ const sections = [
       </div>
       <div class="about prose" set:html={md(text.about)} />
     </div>
-    <div class="hero-stage">
-      <Diagram steps={ui.sitePipeline} title={ui.sitePipelineTitle} hint={ui.lensHint} id="pipeline" tour />
-    </div>
+    {featured.length > 0 && (
+      <nav class="hero-projects" aria-labelledby="hero-projects-h">
+        <p class="kicker" id="hero-projects-h">{ui.selectedProjects}</p>
+        <ul>
+          {featured.map((item, i) => (
+            <li>
+              <a class="pill" href={`#work-${item.slug}`}>
+                <span class="n" aria-hidden="true">{pad2(i + 1)}</span>
+                <span class="t">{shortTitleOf(item, locale)}</span>
+                <span class="c">{ui.categories[item.category]}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
   </section>
 
   {featured.length > 0 && <WorkTabs locale={locale} ui={ui} items={featured} total={cases.length} />}

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { currentRole, pad2, shortStack, shortTitle, splitHeadline } from '../src/themes/glass/scripts/text';
+import { currentRole, pad2, shortStack, shortTitleOf, splitHeadline } from '../src/themes/glass/scripts/text';
 
 describe('splitHeadline', () => {
   it('parte por el espacio que deja las dos mitades más parejas', () => {
@@ -44,14 +44,18 @@ describe('currentRole', () => {
   });
 });
 
-describe('shortTitle', () => {
-  it('se queda con lo que va antes de ":"', () => {
-    expect(shortTitle('Bob: caretaker agent')).toBe('Bob');
+describe('shortTitleOf', () => {
+  const text = (title: string, shortTitle?: string) => ({ title, summary: '', problem: '', solution: '', outcome: '', ...(shortTitle ? { shortTitle } : {}) });
+
+  it('usa el título corto del idioma pedido', () => {
+    const item = { text: { en: text('Local AI assistant over documents', 'Local AI assistant'), es: text('Asistente de IA local', 'Asistente local') } };
+    expect(shortTitleOf(item, 'en')).toBe('Local AI assistant');
+    expect(shortTitleOf(item, 'es')).toBe('Asistente local');
   });
 
-  it('sin ":" (o con ":" al inicio) devuelve el título entero', () => {
-    expect(shortTitle('Home lab')).toBe('Home lab');
-    expect(shortTitle(':odd')).toBe(':odd');
+  it('sin título corto devuelve el título entero, sin recortar', () => {
+    const item = { text: { en: text('Homelab: always-on Docker server'), es: text('Homelab: servidor siempre activo') } };
+    expect(shortTitleOf(item, 'en')).toBe('Homelab: always-on Docker server');
   });
 });
 

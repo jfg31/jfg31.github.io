@@ -2,12 +2,13 @@
 // Trabajo destacado: control segmentado de vidrio (tablist) + un panel por caso (portado de E-liquid-glass "selected work").
 // Sin JS no hay pestañas: los paneles son secciones normales, todos seguidos, sin roles de tablist.
 // Con JS el script pone role=tablist/tab/tabpanel, aria-selected, aria-controls y tabindex móvil (flechas, Inicio/Fin).
+// Cada panel tiene id work-<slug>: las pastillas del hero (y un enlace directo) llevan ahí; con JS abren su pestaña.
 import type { Case, Locale, UiStrings } from '../contract';
 import { formatPeriod } from '../../lib/cases';
 import { localePath } from '../../i18n/ui';
 import { md } from '../../lib/markdown';
 import Diagram from './Diagram.astro';
-import { pad2, shortTitle } from './scripts/text';
+import { pad2, shortTitleOf } from './scripts/text';
 
 interface Props {
   locale: Locale;
@@ -29,9 +30,9 @@ const { locale, ui, items, total } = Astro.props;
     <div class="glass seg" data-tablist data-label={ui.featured} data-lg>
       <span class="drop" aria-hidden="true"></span>
       {items.map((item, i) => (
-        <button type="button" id={`tab-${item.slug}`} data-tab data-panel={`panel-${item.slug}`} tabindex={i === 0 ? undefined : -1}>
+        <button type="button" id={`tab-${item.slug}`} data-tab data-panel={`work-${item.slug}`} tabindex={i === 0 ? undefined : -1}>
           <span class="n" aria-hidden="true">{pad2(i + 1)}</span>
-          <span class="l">{shortTitle(item.text[locale].title)}</span>
+          <span class="l">{shortTitleOf(item, locale)}</span>
         </button>
       ))}
     </div>
@@ -42,7 +43,7 @@ const { locale, ui, items, total } = Astro.props;
       const text = item.text[locale];
       const steps = item.diagram?.[locale];
       return (
-        <article class:list={['panel', { 'no-figure': !steps }]} id={`panel-${item.slug}`}>
+        <article class:list={['panel', { 'no-figure': !steps }]} id={`work-${item.slug}`}>
           <div class="panel-text">
             <p class="kicker">
               {ui.categories[item.category]} · <span class={`status s-${item.status}`}>{ui.statuses[item.status]}</span> · {formatPeriod(item.period, locale)}
@@ -108,6 +109,8 @@ const { locale, ui, items, total } = Astro.props;
 
     function select(tab: HTMLButtonElement, focus: boolean): void {
       current = tab;
+      // el enlace a este trabajo (#work-<slug>) sigue a la pestaña, sin entrada nueva en el historial ni salto
+      history.replaceState(history.state, '', `#${tab.dataset.panel}`);
       for (const t of tabs) {
         const on = t === tab;
         t.setAttribute('aria-selected', on ? 'true' : 'false');
@@ -119,6 +122,15 @@ const { locale, ui, items, total } = Astro.props;
       if (focus) tab.focus();
       // con teclado (focus=true) la gota salta sin animación: las flechas se repiten mucho y no deben esperar al gel
       placeDrop(!focus);
+    }
+
+    const tabFor = (hash: string): HTMLButtonElement | undefined => tabs.find((t) => `#${t.dataset.panel}` === hash);
+
+    // Pastilla del hero o enlace #work-<slug>: abre esa pestaña, desplaza hasta #work y le pasa el foco.
+    function open(tab: HTMLButtonElement): void {
+      select(tab, false);
+      root.scrollIntoView({ behavior: prefersMotion() ? 'smooth' : 'instant', block: 'start' });
+      tab.focus({ preventScroll: true });
     }
 
     // ¿Caben todas las etiquetas? Si no, modo compacto (solo la activa lleva texto). Se mide sin transiciones.
@@ -146,11 +158,32 @@ const { locale, ui, items, total } = Astro.props;
       });
     });
 
-    // estado inicial: solo el primer panel (sin JS se ven todos)
+    // estado inicial: solo el primer panel (sin JS se ven todos), o el del enlace con el que se llegó
     for (const t of tabs.slice(1)) {
       const p = panelOf(t);
       if (p) p.hidden = true;
     }
+    const linked = tabFor(location.hash);
+    if (linked) {
+      select(linked, false);
+      // el desplazamiento espera a la carga: antes, el salto propio del navegador al ancla lo interrumpe
+      const go = (): void => open(linked);
+      if (document.readyState === 'complete') go();
+      else window.addEventListener('load', go, { once: true });
+    }
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="#work-"]');
+      const tab = a ? tabFor(a.getAttribute('href') ?? '') : undefined;
+      if (!tab) return;
+      e.preventDefault();
+      open(tab);
+    });
+    // atrás/adelante o un hash escrito a mano
+    window.addEventListener('hashchange', () => {
+      const tab = tabFor(location.hash);
+      if (tab) open(tab);
+    });
     root.classList.add('is-ready');
     fit();
     let timer = 0;

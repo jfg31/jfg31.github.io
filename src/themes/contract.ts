@@ -78,6 +78,8 @@ export interface UiStrings {
   readCase: string;
   /** Título del diagrama de un caso (tema glass). */
   caseDiagramTitle: string;
+  /** Etiqueta del grupo de pastillas del hero que llevan a cada trabajo destacado (tema glass). */
+  selectedProjects: string;
 }
 
 export interface ThemeProps {

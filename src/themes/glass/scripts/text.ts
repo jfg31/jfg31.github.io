@@ -1,4 +1,5 @@
 // Ayudas de presentación del tema glass. Solo reorganizan texto que ya viene de profile/cases; no inventan nada.
+import type { Case, Locale } from '../../contract';
 
 /**
  * Parte el titular en dos mitades por el espacio que deja las dos partes más parejas
@@ -29,10 +30,9 @@ export function currentRole(experience: string): string | null {
   return m[2] ? `${m[1].trim()} · ${m[2].trim()}` : m[1].trim();
 }
 
-/** Etiqueta corta de una pestaña: lo que va antes de ":" en el título, o el título entero. */
-export function shortTitle(title: string): string {
-  const i = title.indexOf(':');
-  return i > 0 ? title.slice(0, i).trim() : title;
+/** Nombre corto de un caso (pastillas del hero y pestañas): su título corto del cerebro o, si no tiene, el título. */
+export function shortTitleOf(item: Pick<Case, 'text'>, locale: Locale): string {
+  return item.text[locale].shortTitle ?? item.text[locale].title;
 }
 
 /** Pila corta para el índice: los primeros `max` y "+N". */

@@ -43,6 +43,7 @@ export const ui: Record<Locale, UiStrings> = {
     featuredTag: 'Featured',
     readCase: 'Read the full case',
     caseDiagramTitle: 'How it works',
+    selectedProjects: 'Selected projects',
   },
   es: {
     siteTitle: 'Jose Flores — Ingeniero de Automatización e IA',
@@ -86,6 +87,7 @@ export const ui: Record<Locale, UiStrings> = {
     featuredTag: 'Destacado',
     readCase: 'Leer el caso completo',
     caseDiagramTitle: 'Cómo funciona',
+    selectedProjects: 'Proyectos destacados',
   },
 };
 
