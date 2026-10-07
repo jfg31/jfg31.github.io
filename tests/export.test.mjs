@@ -63,6 +63,43 @@ c
 h
 `;
 
+const locale = ({ section, h, extra = '' }) => `
+## ${section}
+### ${h.title} [ia]
+AI Engineer ${section}
+### ${h.title} [fullstack]
+Full-Stack Developer ${section}
+### ${h.summary} [ia]
+Summary ai.
+### ${h.summary} [fullstack]
+Summary fullstack.
+### ${h.skills}
+- [ia] **Grupo A:** n8n, Ollama
+- [ia, fullstack] **Grupo B:** Python, TypeScript
+- [fullstack] **Grupo C:** Astro, React
+- [ia, fullstack] **Grupo D:** Docker, Git
+### ${h.experience}
+Developer | Helvetia del Caribe | 2021 – presente
+- [ia, fullstack] Bullet uno.
+- [ia] Bullet dos ia.
+- [fullstack] Bullet dos fs.
+- [ia, fullstack] Bullet tres.
+### ${h.projects}
+- [ia] **Uno** (uno) — Proyecto uno.
+- [ia, fullstack] **Dos** (uno) — Proyecto dos.
+- [fullstack] **Tres** (uno) — Proyecto tres.
+### ${h.education}
+B.S. Computer Science | UPRB | 2021
+### ${h.certifications}
+Microsoft Office Specialist: Excel | Microsoft | 2020
+${extra}`;
+
+const ES = { section: 'Versión pública (ES)', h: { title: 'Título', summary: 'Resumen', skills: 'Habilidades', experience: 'Experiencia', projects: 'Proyectos', education: 'Educación', certifications: 'Certificaciones' } };
+const EN = { section: 'Public version (EN)', h: { title: 'Title', summary: 'Summary', skills: 'Skills', experience: 'Experience', projects: 'Projects', education: 'Education', certifications: 'Certifications' } };
+
+const resumeFile = ({ es = locale(ES), en = locale(EN) } = {}) =>
+  `---\nactualizado: 2026-10-06\n---\n# Resume\n## Privado\n- Teléfono: (787) 555-0199\n- Ciudad: Bayamón\n\n${es}\n${en}`;
+
 let root;
 let portfolioDir;
 let outDir;
@@ -73,6 +110,7 @@ beforeEach(async () => {
   outDir = join(root, 'content');
   await mkdir(join(portfolioDir, 'Casos'), { recursive: true });
   await writeFile(join(portfolioDir, 'Perfil.md'), profileFile);
+  await writeFile(join(portfolioDir, 'Resume.md'), resumeFile());
 });
 
 afterEach(async () => {
@@ -84,7 +122,7 @@ describe('exportAll', () => {
     await writeFile(join(portfolioDir, 'Casos', 'Uno.md'), caseFile('uno'));
     await writeFile(join(portfolioDir, 'Casos', 'Privado.md'), caseFile('privado', false));
     const result = await exportAll({ portfolioDir, outDir });
-    expect(result).toEqual({ cases: 1, skipped: 1 });
+    expect(result).toEqual({ cases: 1, skipped: 1, resume: true });
     expect(await readdir(join(outDir, 'cases'))).toEqual(['uno.json']);
     const uno = JSON.parse(await readFile(join(outDir, 'cases', 'uno.json'), 'utf8'));
     expect(uno.text.en.title).toBe('uno EN');
@@ -111,5 +149,28 @@ describe('exportAll', () => {
     await writeFile(join(portfolioDir, 'Casos', 'foto.png'), 'x');
     const result = await exportAll({ portfolioDir, outDir });
     expect(result.cases).toBe(1);
+  });
+
+  it('escribe content/resume.json sin la sección privada', async () => {
+    await writeFile(join(portfolioDir, 'Casos', 'Uno.md'), caseFile('uno'));
+    await exportAll({ portfolioDir, outDir });
+    const raw = await readFile(join(outDir, 'resume.json'), 'utf8');
+    const resume = JSON.parse(raw);
+    expect(Object.keys(resume.variants)).toEqual(['ai', 'fullstack']);
+    expect(raw).not.toContain('555-0199');
+  });
+
+  it('falla si falta Resume.md', async () => {
+    await writeFile(join(portfolioDir, 'Casos', 'Uno.md'), caseFile('uno'));
+    await rm(join(portfolioDir, 'Resume.md'));
+    await expect(exportAll({ portfolioDir, outDir })).rejects.toThrow(/Resume\.md no existe/);
+  });
+
+  it('falla si un proyecto del resume apunta a un caso privado', async () => {
+    await writeFile(join(portfolioDir, 'Casos', 'Uno.md'), caseFile('uno'));
+    await writeFile(join(portfolioDir, 'Casos', 'secreto.md'), caseFile('secreto', false));
+    const md = (await readFile(join(portfolioDir, 'Resume.md'), 'utf8')).replaceAll('(uno)', '(secreto)');
+    await writeFile(join(portfolioDir, 'Resume.md'), md);
+    await expect(exportAll({ portfolioDir, outDir })).rejects.toThrow(/«secreto» no existe o no es público/);
   });
 });
