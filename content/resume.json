@@ -1,0 +1,263 @@
+{
+  "updated": "2026-10-06",
+  "variants": {
+    "ai": {
+      "es": {
+        "title": "Ingeniero de Automatización e IA",
+        "summary": "Desarrollador en Puerto Rico que construye automatizaciones y asistentes de IA que corren en hardware local, para que los datos sensibles nunca salgan de la empresa. Trabajo a diario con n8n, Python, TypeScript y modelos locales con Ollama, desde pipelines RAG hasta bots que ponen los tickets de un equipo de soporte a un mensaje de distancia.",
+        "skills": [
+          {
+            "group": "IA y automatización",
+            "items": "n8n, Ollama, LangChain, RAG, ChromaDB, agentes de IA, diseño de prompts"
+          },
+          {
+            "group": "Lenguajes",
+            "items": "Python, TypeScript, JavaScript, SQL"
+          },
+          {
+            "group": "APIs y datos",
+            "items": "FastAPI, Jira Cloud API, Telegram Bot API, pandas, SQLite"
+          },
+          {
+            "group": "Infraestructura",
+            "items": "Docker, Linux, Nginx Proxy Manager, Cloudflare Tunnel, Git, GitHub Actions"
+          }
+        ],
+        "experience": {
+          "role": "Desarrollador",
+          "company": "Helvetia del Caribe",
+          "dates": "abr 2021 – presente",
+          "bullets": [
+            "Construí una plataforma de soporte con más de 16 workflows de n8n detrás de un bot de Telegram: consultas de tickets, alertas de tickets estancados y carga del equipo, y reportes diarios y semanales con IA.",
+            "Desarrollé un asistente RAG on-premise sobre documentos internos e historial de código: OCR para escaneados, búsqueda híbrida semántica y por palabras clave, y análisis de datos con código generado, sin nube.",
+            "Creé un agente que convierte preguntas en lenguaje natural en consultas de Jira con un LLM local y devuelve un reporte legible en el chat, para que el equipo no tenga que escribir JQL.",
+            "Armé dashboards de estadísticas con dos años de tickets, actualizados a diario y con archivado anual, que reemplazan los reportes manuales de volumen, tipos y tiempos de resolución."
+          ]
+        },
+        "projects": [
+          {
+            "name": "Homelab",
+            "slug": "homelab-servidor-docker-red",
+            "text": "Convertí una laptop vieja en un servidor Linux siempre encendido: Docker tras un proxy inverso, DNS con Pi-hole y Cloudflare Tunnel sin puertos abiertos; sobrevivió dos apagones sin perder datos."
+          },
+          {
+            "name": "Desarrollo con agentes de IA",
+            "slug": "desarrollo-con-agentes-ia",
+            "text": "Diseñé un sistema personal de agentes: un segundo cerebro en Obsidian como contexto compartido, un agente cuidador de tareas pendientes y un resumen diario de noticias con un LLM local."
+          },
+          {
+            "name": "Plantillas n8n para negocios locales",
+            "slug": "automatizaciones-pymes",
+            "text": "Prototipo propio Anti-No-Show: recordatorios por Telegram con confirmar o cancelar en un toque, Google Sheets como backend y alertas de fallo probadas de punta a punta."
+          }
+        ],
+        "education": [
+          {
+            "title": "B.S. en Ciencias de Computadoras, Sistemas de Información",
+            "institution": "Universidad de Puerto Rico en Bayamón",
+            "year": "2021"
+          }
+        ],
+        "certifications": [
+          {
+            "title": "Microsoft Office Specialist: Excel",
+            "issuer": "Microsoft",
+            "year": "2020"
+          }
+        ]
+      },
+      "en": {
+        "title": "Automation & AI Engineer",
+        "summary": "Developer in Puerto Rico who builds workflow automation and AI assistants that run on local hardware, so sensitive data never leaves the company. I work daily with n8n, Python, TypeScript and local LLMs served with Ollama, from RAG pipelines to chat bots that put a support team's tickets one message away.",
+        "skills": [
+          {
+            "group": "AI & automation",
+            "items": "n8n, Ollama, LangChain, RAG, ChromaDB, AI agents, prompt design"
+          },
+          {
+            "group": "Languages",
+            "items": "Python, TypeScript, JavaScript, SQL"
+          },
+          {
+            "group": "APIs & data",
+            "items": "FastAPI, Jira Cloud API, Telegram Bot API, pandas, SQLite"
+          },
+          {
+            "group": "Infrastructure",
+            "items": "Docker, Linux, Nginx Proxy Manager, Cloudflare Tunnel, Git, GitHub Actions"
+          }
+        ],
+        "experience": {
+          "role": "Developer",
+          "company": "Helvetia del Caribe",
+          "dates": "Apr 2021 – Present",
+          "bullets": [
+            "Built a support automation platform of 16+ n8n workflows behind a Telegram bot: ticket lookups, alerts for stalled tickets and team workload, and daily and weekly reports with AI analysis.",
+            "Developed an on-premise RAG assistant over internal documents and code history: OCR for scanned files, hybrid semantic and keyword search, and data analysis through model-generated code, with no cloud AI.",
+            "Created an agent that turns natural-language questions into Jira queries with a local LLM and returns a readable report in the chat, so the team no longer has to write JQL.",
+            "Built ticket statistics dashboards over two years of data, refreshed daily with yearly archiving, replacing hand-made reports on volume, ticket types and resolution times."
+          ]
+        },
+        "projects": [
+          {
+            "name": "Homelab",
+            "slug": "homelab-servidor-docker-red",
+            "text": "Turned an old laptop into an always-on Linux server: Docker behind a reverse proxy, Pi-hole DNS and Cloudflare Tunnel with no open ports; it survived two power outages with no data loss."
+          },
+          {
+            "name": "AI development workflow",
+            "slug": "desarrollo-con-agentes-ia",
+            "text": "Designed a personal agent system: an Obsidian second brain as shared context, a caretaker agent for pending tasks, and a daily news digest from a local LLM."
+          },
+          {
+            "name": "n8n templates for local businesses",
+            "slug": "automatizaciones-pymes",
+            "text": "Self-initiated Anti-No-Show prototype: Telegram reminders with one-tap confirm or cancel, Google Sheets as the backend, and failure alerts tested end to end."
+          }
+        ],
+        "education": [
+          {
+            "title": "B.S. in Computer Science, Information Systems",
+            "institution": "University of Puerto Rico at Bayamón",
+            "year": "2021"
+          }
+        ],
+        "certifications": [
+          {
+            "title": "Microsoft Office Specialist: Excel",
+            "issuer": "Microsoft",
+            "year": "2020"
+          }
+        ]
+      }
+    },
+    "fullstack": {
+      "es": {
+        "title": "Desarrollador Full-Stack",
+        "summary": "Desarrollador en Puerto Rico que diseña, construye y publica productos completos: una app de React Native en el App Store, apps web en TypeScript con Fastify y PostgreSQL, y las automatizaciones y dashboards que las apoyan. Cómodo desde el esquema de la base de datos hasta el despliegue, incluido Docker en un servidor Linux propio.",
+        "skills": [
+          {
+            "group": "Lenguajes",
+            "items": "Python, TypeScript, JavaScript, SQL"
+          },
+          {
+            "group": "Web y móvil",
+            "items": "React, React Native, Expo, Vite, Tailwind CSS, Astro"
+          },
+          {
+            "group": "Backend y datos",
+            "items": "Node.js, Fastify, FastAPI, PostgreSQL, Prisma, Firebase"
+          },
+          {
+            "group": "Infraestructura",
+            "items": "Docker, Linux, Nginx Proxy Manager, Cloudflare Tunnel, Git, GitHub Actions"
+          }
+        ],
+        "experience": {
+          "role": "Desarrollador",
+          "company": "Helvetia del Caribe",
+          "dates": "abr 2021 – presente",
+          "bullets": [
+            "Construí una plataforma de soporte con más de 16 workflows de n8n detrás de un bot de Telegram: consultas de tickets, alertas de tickets estancados y carga del equipo, y reportes diarios y semanales con IA.",
+            "Armé dashboards de estadísticas con dos años de tickets, actualizados a diario y con archivado anual, que reemplazan los reportes manuales de volumen, tipos y tiempos de resolución.",
+            "Desarrollé el backend en FastAPI del asistente y su despliegue con Docker, integrando servicios en Python, una base de datos vectorial y SQLite en hardware local."
+          ]
+        },
+        "projects": [
+          {
+            "name": "SoftlyAlma",
+            "slug": "softlyalma",
+            "text": "App de citas diarias publicada en el App Store: React Native y Expo, backend en Firebase con Cloud Functions, panel web de administración, notificaciones push y 345 entradas bilingües."
+          },
+          {
+            "name": "GasPricesLow",
+            "slug": "gaspriceslow",
+            "text": "Prototipo para encontrar la gasolina más barata cerca de ti en Puerto Rico: mapa y ranking en React, panel para dueños y de administración, en un monorepo con Fastify, Prisma y PostGIS."
+          },
+          {
+            "name": "Prototipos para negocios locales",
+            "slug": "prototipos-negocios-locales",
+            "text": "Tres prototipos por iniciativa propia para negocios reales de Puerto Rico (citas, vitrina web, cola con alertas SMS), desde la necesidad detectada hasta la demo y la propuesta."
+          }
+        ],
+        "education": [
+          {
+            "title": "B.S. en Ciencias de Computadoras, Sistemas de Información",
+            "institution": "Universidad de Puerto Rico en Bayamón",
+            "year": "2021"
+          }
+        ],
+        "certifications": [
+          {
+            "title": "Microsoft Office Specialist: Excel",
+            "issuer": "Microsoft",
+            "year": "2020"
+          }
+        ]
+      },
+      "en": {
+        "title": "Full-Stack Developer",
+        "summary": "Developer in Puerto Rico who designs, builds and ships complete products: a React Native app live on the App Store, TypeScript web apps with Fastify and PostgreSQL, and the automations and dashboards behind them. Comfortable from database schema to deployment, including Docker on a self-hosted Linux server.",
+        "skills": [
+          {
+            "group": "Languages",
+            "items": "Python, TypeScript, JavaScript, SQL"
+          },
+          {
+            "group": "Web & mobile",
+            "items": "React, React Native, Expo, Vite, Tailwind CSS, Astro"
+          },
+          {
+            "group": "Backend & data",
+            "items": "Node.js, Fastify, FastAPI, PostgreSQL, Prisma, Firebase"
+          },
+          {
+            "group": "Infrastructure",
+            "items": "Docker, Linux, Nginx Proxy Manager, Cloudflare Tunnel, Git, GitHub Actions"
+          }
+        ],
+        "experience": {
+          "role": "Developer",
+          "company": "Helvetia del Caribe",
+          "dates": "Apr 2021 – Present",
+          "bullets": [
+            "Built a support automation platform of 16+ n8n workflows behind a Telegram bot: ticket lookups, alerts for stalled tickets and team workload, and daily and weekly reports with AI analysis.",
+            "Built ticket statistics dashboards over two years of data, refreshed daily with yearly archiving, replacing hand-made reports on volume, ticket types and resolution times.",
+            "Developed the assistant's FastAPI backend and Docker deployment, integrating Python services, a vector database and SQLite on local hardware."
+          ]
+        },
+        "projects": [
+          {
+            "name": "SoftlyAlma",
+            "slug": "softlyalma",
+            "text": "Daily-quotes iOS app live on the App Store: React Native and Expo, a Firebase backend with Cloud Functions, a web admin panel, push notifications and 345 bilingual entries."
+          },
+          {
+            "name": "GasPricesLow",
+            "slug": "gaspriceslow",
+            "text": "Prototype that finds the cheapest gas near you in Puerto Rico: React map and ranking, owner dashboard and admin panel, in a monorepo with Fastify, Prisma and PostGIS."
+          },
+          {
+            "name": "Local business prototypes",
+            "slug": "prototipos-negocios-locales",
+            "text": "Three self-initiated prototypes for real Puerto Rico businesses (booking, a showcase site, an SMS-alert queue), taken from a spotted need to a working demo and pitch."
+          }
+        ],
+        "education": [
+          {
+            "title": "B.S. in Computer Science, Information Systems",
+            "institution": "University of Puerto Rico at Bayamón",
+            "year": "2021"
+          }
+        ],
+        "certifications": [
+          {
+            "title": "Microsoft Office Specialist: Excel",
+            "issuer": "Microsoft",
+            "year": "2020"
+          }
+        ]
+      }
+    }
+  }
+}
